@@ -24,6 +24,9 @@ app.register(healthCheck)
 app.register(createXmlRoutes)
 app.register(createXmlParams)
 
+
+enviaPareclado()
+
 app
   .listen({
     port: apiPort,
