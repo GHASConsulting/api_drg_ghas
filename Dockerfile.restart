@@ -1,0 +1,23 @@
+FROM alpine:latest
+
+# Instalar dependências necessárias
+RUN apk add --no-cache \
+    bash \
+    docker-cli \
+    curl \
+    jq \
+    tzdata
+
+# Configurar timezone
+ENV TZ=America/Sao_Paulo
+
+# Criar diretório da aplicação
+WORKDIR /app
+
+# Copiar script de reinício
+COPY restart-container.sh /app/restart-container.sh
+RUN chmod +x /app/restart-container.sh
+
+# Comando para iniciar o scheduler de reinício
+CMD ["/app/restart-container.sh"]
+
