@@ -130,3 +130,4 @@ As logs (XMLs referentes aos lotes de internação) estarão dentro do diretóri
 ```bash
 cd api-drgmv-fastify-ghas/logs
 ```
+# api_drg_ghas
