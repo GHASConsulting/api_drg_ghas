@@ -1,0 +1,196 @@
+{
+  "Internacao": {
+    "Situacao": "1",
+    "CaraterDaInternacao": "2",
+    "ProcedenciaDoPaciente": "P",
+    "Leito": "10B",
+    "NumeroDaOperadoraFontePagadora": "894321",
+    "NumeroDoRegistro": "253687",
+    "NumeroDeAtendimento": "996521",
+    "NumeroDaAutorizacao": "875234",
+    "DataDeInternacao": "2024-05-20",
+    "DataDaAlta": "2024-05-25",
+    "CondicaoDaAlta": "A",
+    "CodigoDoCIDPrincipal": "J189",
+    "DataDaAutorizacao": "2024-05-19",
+    "PacienteInternadoOutrasVezes": "S",
+    "HospitalDeInternacaoAnterior": "O",
+    "UltimaInternacaoA30Dias": "N",
+    "InternacaoEUmAComplicacaoOuRecaidaDaInternacaoAnterior": "N",
+    "Acao": "INCLUSAO",
+    "NenhumDispositivoTerapeutico": "N",
+    "Nota": "Paciente com quadro de pneumonia, apresentando melhora clínica significativa.",
+    "TipoDeNota": "S",
+    "DataDaNota": "2024-05-22",
+    "Hospital": {
+      "CodigoDoHospital": "445667",
+      "NomeDoHospital": "Hospital São Lucas",
+      "CNES": "88291",
+      "Porte": "2",
+      "Complexidade": "3",
+      "EsferaAdministrativa": "1",
+      "TipoDoLogradouro": "RUA",
+      "Logradouro": "das Palmeiras",
+      "NumeroDoLogradouro": "125",
+      "ComplementoDoLogradouro": "Bloco A",
+      "Bairro": "Centro",
+      "UF": "SP",
+      "Municipio": "3550308",
+      "CEP": "01020-300",
+      "Beneficiario": {
+        "DataDeNascimento": "1990-06-15",
+        "Sexo": "M",
+        "CPF": "123.456.789-01",
+        "CNS": "987654321012345",
+        "RecemNascido": "N",
+        "Particular": "S",
+        "VulnerabilidadeSocial": "N",
+        "UF": "SP",
+        "Municipio": "3550308",
+        "TipoDoLogradouro": "AVENIDA",
+        "Logradouro": "Brasil",
+        "NumeroDoLogradouro": "1200",
+        "ComplementoDoLogradouro": "Apto 45"
+      }
+    },
+    "CausaExterna": {
+      "Descricao": "Queda da própria altura",
+      "Tempo": "2024-05-18T10:30:00",
+      "DataInicialDaCausaExterna": "2024-05-18",
+      "DataFinalDaCausaExterna": "2024-05-18",
+      "Origem": "H"
+    },
+    "Operadora": {
+      "Codigo": "123456",
+      "Plano": "Plano Premium Saúde",
+      "NumeroCarteira": "CART123456789",
+      "DataValidade": "2025-12-31"
+    },
+    "Diagnostico": {
+      "CodigoDoCID": "J189",
+      "TipoDeDiagnostico": "P",
+      "DataDoDiagnostico": "2024-05-20",
+      "Descricao": "Pneumonia bacteriana não especificada",
+      "TipoDeInternacao": "Eletiva"
+    },
+    "CidSecundario": {
+      "CodigoCidSecundario": "E11.9"
+    },
+    "Procedimento": {
+      "CodigoProcedimento": "0310010019",
+      "Descricao": "Intubação endotraqueal",
+      "Urgencia": "S",
+      "DataDoProcedimento": "2024-05-20",
+      "DataAutorizacao": "2024-05-20",
+      "DataSolicitacao": "2024-05-20",
+      "DataExecucao": "2024-05-20",
+      "DataExecucaoFinal": "2024-05-20"
+    },
+    "Diaria": {
+      "Codigo": "101",
+      "Descricao": "Diária UTI",
+      "Valor": "1500.00",
+      "Quantidade": "2",
+      "DataInicial": "2024-05-20",
+      "DataFinal": "2024-05-22",
+      "DataAutorizacao": "2024-05-20",
+      "Acao": "INCLUSAO"
+    },
+    "Taxa": {
+      "Codigo": "401",
+      "Descricao": "Taxa de oxigenoterapia",
+      "Valor": "250.50",
+      "Quantidade": "1",
+      "DataAutorizacao": "2024-05-20",
+      "Acao": "INCLUSAO"
+    },
+    "Insumo": {
+      "Codigo": "801",
+      "Descricao": "Seringa 10ml",
+      "Valor": "1.50",
+      "Quantidade": "5",
+      "DataAutorizacao": "2024-05-20",
+      "Acao": "INCLUSAO"
+    },
+    "Servico": {
+      "Codigo": "901",
+      "Descricao": "Exame de sangue",
+      "Valor": "80.00",
+      "Quantidade": "1",
+      "DataAutorizacao": "2024-05-20",
+      "Acao": "INCLUSAO"
+    },
+    "ProfissionalExecutante": {
+      "Nome": "Dr. João Silva",
+      "CodigoNoConselho": "12345",
+      "Conselho": "CRM",
+      "UFConselho": "SP",
+      "Especialidade": "Clínico Geral"
+    },
+    "Medicamento": {
+      "Codigo": "501",
+      "Nome": "Dipirona 500mg",
+      "Unidade": "mg",
+      "Quantidade": "500"
+    },
+    "CTI": {
+      "Leito": "20A",
+      "DataDeEntradaNaCTI": "2024-05-20",
+      "DataDeSaidaDaCTI": "2024-05-22",
+      "CodigoCidPrincipal": "J189",
+      "CondicaoAlta": "A",
+      "Uf": "SP",
+      "Crm": "12345",
+      "CodigoHospital": "445667",
+      "NomeHospital": "Hospital São Lucas",
+      "Tipo": "UTI Adulto"
+    },
+    "DRG": {
+      "Descricao": "Pneumonia e infecção respiratória",
+      "Versao": "3.0"
+    },
+    "DRGComorbidades": {
+      "Descricao": "Diabetes mellitus tipo 2"
+    },
+    "DRGComplicacoes": {
+      "Descricao": "Sepse"
+    },
+    "CondicaoAdquirida": {
+      "CodigoCondicaoAdquirida": "A41.9",
+      "DataOcorrencia": "2024-05-21",
+      "DataManifestacao": "2024-05-21",
+      "Uf": "SP",
+      "Crm": "12345"
+    },
+    "SuporteVentilatorio": {
+      "Tipo": "I",
+      "TipoInvasivo": "U",
+      "Local": "C",
+      "DataInicial": "2024-05-20",
+      "DataFinal": "2024-05-22"
+    },
+    "SondaVesicalDeDemora": {
+      "Local": "C",
+      "DataInicial": "2024-05-20",
+      "DataFinal": "2024-05-22"
+    },
+    "CateterVascularCentral": {
+      "Local": "C",
+      "DataInicial": "2024-05-20",
+      "DataFinal": "2024-05-22"
+    },
+    "RN": {
+      "NumeroDoRegistro": "253687",
+      "NumeroDoAtendimento": "996521"
+    },
+    "PartoAdequado": {
+      "TipoDeInducaoDoParto": "Nao induzido",
+      "MedicacaoDeInducaoDoParto": "Nenhuma",
+      "NumeroDeCesareasAnteriores": "0"
+    },
+    "UrgenciaEmergencia": {
+      "Codigo": "405",
+      "DataDeEntrada": "2024-05-20"
+    }
+  }
+}
