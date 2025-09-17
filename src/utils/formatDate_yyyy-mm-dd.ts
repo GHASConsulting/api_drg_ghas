@@ -1,7 +1,12 @@
 import { date } from 'zod'
 
+
+// TO DO:
+// - em teste desativado a funcao para teste. 
+
 /** @description Format date to format yyyy-MM-ddTHH:mm:ss */
 export function converterData(dataStr: string | null): string | null {
+  return dataStr
 
   if (!dataStr) {
     return null
