@@ -51,6 +51,8 @@ export async function admission(
         response.status
       );
 
+      console.log(response.data);
+
       // Processa a resposta individual
       if (response.data) {
         const jObj = await xmlToJson(response.data);
@@ -83,7 +85,7 @@ export async function admission(
                     const erro = internacao.erro?.[0] ?? "Erro padrão";
                     await knex
                       .update({
-                        TP_STATUS: "E",
+                        TP_STATUS: "A",
                         DS_ERRO: erro,
                       })
                       .from(TBL_ATENDIMENTO)
@@ -131,7 +133,7 @@ export async function admission(
       // Marca como erro no banco
       await knex
         .update({
-          TP_STATUS: "E",
+          TP_STATUS: "A",
           DS_ERRO: error.message || "Erro no processamento",
         })
         .from(TBL_ATENDIMENTO)
