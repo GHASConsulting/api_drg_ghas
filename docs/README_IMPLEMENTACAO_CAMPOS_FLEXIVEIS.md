@@ -32,7 +32,7 @@ src/
 
 ### 1. Sistema de Configuração por Variáveis de Ambiente
 
-#### 1.1 Arquivo de Configuração (`config/drgFields.ts`)
+#### 1.1 Arquivo de Configuração (`config/drgFields.ts`) (IURY)
 
 ```typescript
 export interface DRGFieldConfig {
@@ -659,7 +659,7 @@ export const DRG_CONFIG: DRGFieldConfig = {
 };
 ```
 
-#### 1.2 Variáveis de Ambiente (`.env`)
+#### 1.2 Variáveis de Ambiente (`.env`) ( Fernando)
 
 ```bash
 # Configurações de seções opcionais
@@ -698,9 +698,9 @@ HOSPITAL_3_INCLUIR_PROCEDIMENTOS=false
 HOSPITAL_3_INCLUIR_PARTO_ADEQUADO=true
 ```
 
-### 2. Sistema de Validação Dinâmica
+### 2. Sistema de Validação Dinâmica 
 
-#### 2.1 Classe Validador (`utils/drgValidator.ts`)
+#### 2.1 Classe Validador (`utils/drgValidator.ts`) (Fernando)
 
 ```typescript
 import { DRG_CONFIG } from "../config/drgFields";
