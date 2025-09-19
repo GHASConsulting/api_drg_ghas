@@ -1,17 +1,18 @@
 export class CidSecundario {
-  private cidSecundario: string
+  // Campo opcional para todas as situações
+  private codigoCidSecundario: string; // Código CID secundário (15 caracteres)
 
   constructor() {
-    this.cidSecundario = ''
+    this.codigoCidSecundario = "";
   }
 
-  public setCidSecundario(cidSecundario) {
-    this.cidSecundario = cidSecundario
+  public setCodigoCidSecundario(codigoCidSecundario: string): void {
+    this.codigoCidSecundario = codigoCidSecundario;
   }
 
   public getData(): object {
     return {
-      codigoCidSecundario: this.cidSecundario,
-    }
+      codigoCidSecundario: this.codigoCidSecundario,
+    };
   }
 }

@@ -1,51 +1,54 @@
-import { CondicaoAdquiridaSuporteVentilatorio } from './condicaoAdquiridaSuporteVentilatorio'
+import { CondicaoAdquiridaSuporteVentilatorio } from "./condicaoAdquiridaSuporteVentilatorio";
 
 export class SuporteVentilatorio {
-  private tipo: string
-  private tipoInvasivo: string
-  private local: string
-  private dataInicial: string
-  private dataFinal: string
-  private condicaoAdquiridaSuporteVentilatorio: CondicaoAdquiridaSuporteVentilatorio
-  private condicoesAdquiridasSuportesVentilatorios: CondicaoAdquiridaSuporteVentilatorio[]
+  // Campos opcionais para todas as situações
+  private tipo: string; // I-Invasivo, N-Não Invasivo, S-Sem Informação
+  private tipoInvasivo: string; // T-Traqueostomia, U-Tubo Oro/Nasotraqueal, S-Sem Informação
+  private local: string; // C-No CTI, F-Fora do CTI, S-Sem Informação
+  private dataInicial: string; // Data inicial do suporte ventilatório (yyyy-MM-ddTHH:mm:ss)
+  private dataFinal: string; // Data final do suporte ventilatório (yyyy-MM-ddTHH:mm:ss)
+
+  // Relacionamento com condições adquiridas
+  private condicaoAdquiridaSuporteVentilatorio: CondicaoAdquiridaSuporteVentilatorio;
+  private condicoesAdquiridasSuportesVentilatorios: CondicaoAdquiridaSuporteVentilatorio[];
 
   constructor() {
-    this.tipo = ''
-    this.tipoInvasivo = ''
-    this.local = ''
-    this.dataInicial = ''
-    this.dataFinal = ''
+    this.tipo = "";
+    this.tipoInvasivo = "";
+    this.local = "";
+    this.dataInicial = "";
+    this.dataFinal = "";
     this.condicaoAdquiridaSuporteVentilatorio =
-      new CondicaoAdquiridaSuporteVentilatorio()
-    this.condicoesAdquiridasSuportesVentilatorios = []
+      new CondicaoAdquiridaSuporteVentilatorio();
+    this.condicoesAdquiridasSuportesVentilatorios = [];
   }
 
   public addCondicaoAdquiridaSuporteVentilatorio(
-    condicaoAdquiridaSuporteVentilatorio,
+    condicaoAdquiridaSuporteVentilatorio
   ) {
     this.condicoesAdquiridasSuportesVentilatorios.push(
-      condicaoAdquiridaSuporteVentilatorio,
-    )
+      condicaoAdquiridaSuporteVentilatorio
+    );
   }
 
   public setTipo(tipo) {
-    this.tipo = tipo
+    this.tipo = tipo;
   }
 
   public setTipoInvasivo(tipoInvasivo) {
-    this.tipoInvasivo = tipoInvasivo
+    this.tipoInvasivo = tipoInvasivo;
   }
 
   public setLocal(local) {
-    this.local = local
+    this.local = local;
   }
 
   public setDataInicial(dataInicial) {
-    this.dataInicial = dataInicial
+    this.dataInicial = dataInicial;
   }
 
   public setDataFinal(dataFinal) {
-    this.dataFinal = dataFinal
+    this.dataFinal = dataFinal;
   }
 
   public getData(): object {
@@ -58,8 +61,8 @@ export class SuporteVentilatorio {
       CondicaoAdquiridaSuporteVentilatorio:
         this.condicoesAdquiridasSuportesVentilatorios.map(
           (condicaoAdquiridaSuporteVentilatorio) =>
-            condicaoAdquiridaSuporteVentilatorio.getData(),
+            condicaoAdquiridaSuporteVentilatorio.getData()
         ),
-    }
+    };
   }
 }

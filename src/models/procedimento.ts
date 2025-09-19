@@ -1,50 +1,52 @@
-import { MedicoProcedimento } from './medicoProcedimento'
+import { MedicoProcedimento } from "./medicoProcedimento";
 
 export class Procedimento {
-  private codigoProcedimento: string
-  private dataAutorizacao: string
-  private dataExecucao: string
-  private dataSolicitacao: string
-  private dataExecucaoFinal: string
+  // Campos opcionais para todas as situações
+  private codigoProcedimento: string; // Código do procedimento SUS/TUSS (20 caracteres)
+  private dataAutorizacao: string; // Data da autorização (yyyy-MM-ddTHH:mm:ss)
+  private dataSolicitacao: string; // Data da solicitação (yyyy-MM-ddTHH:mm:ss)
+  private dataExecucao: string; // Data inicial da execução (yyyy-MM-ddTHH:mm:ss)
+  private dataExecucaoFinal: string; // Data final da execução (yyyy-MM-ddTHH:mm:ss)
 
-  private medicoProcedimento: MedicoProcedimento
-  private medicosProcedimentos: MedicoProcedimento[]
+  // Relacionamento com médicos do procedimento
+  private medicoProcedimento: MedicoProcedimento;
+  private medicosProcedimentos: MedicoProcedimento[];
 
   constructor() {
-    this.codigoProcedimento = ''
-    this.dataAutorizacao = ''
+    this.codigoProcedimento = "";
+    this.dataAutorizacao = "";
 
-    this.dataExecucao = ''
-    this.dataSolicitacao = ''
+    this.dataExecucao = "";
+    this.dataSolicitacao = "";
 
-    this.dataExecucaoFinal = ''
+    this.dataExecucaoFinal = "";
 
-    this.medicoProcedimento = new MedicoProcedimento()
-    this.medicosProcedimentos = []
+    this.medicoProcedimento = new MedicoProcedimento();
+    this.medicosProcedimentos = [];
   }
 
   public setCodigoProcedimento(codigoProcedimento) {
-    this.codigoProcedimento = codigoProcedimento
+    this.codigoProcedimento = codigoProcedimento;
   }
 
   public setDataExecucao(dataExecucao) {
-    this.dataExecucao = dataExecucao
+    this.dataExecucao = dataExecucao;
   }
 
   public setDataAutorizacao(dataAutorizacao) {
-    this.dataAutorizacao = dataAutorizacao
+    this.dataAutorizacao = dataAutorizacao;
   }
 
   public setDataSolicitacao(dataSolicitacao) {
-    this.dataSolicitacao = dataSolicitacao
+    this.dataSolicitacao = dataSolicitacao;
   }
 
   public setDataExecucaoFinal(dataExecucaoFinal) {
-    this.dataExecucaoFinal = dataExecucaoFinal
+    this.dataExecucaoFinal = dataExecucaoFinal;
   }
 
   public addMedicoProcedimento(medicoProcedimento: MedicoProcedimento): void {
-    this.medicosProcedimentos.push(medicoProcedimento)
+    this.medicosProcedimentos.push(medicoProcedimento);
   }
 
   public getData(): object {
@@ -55,8 +57,8 @@ export class Procedimento {
       dataSolicitacao: this.dataSolicitacao,
       dataExecucaoFinal: this.dataExecucaoFinal,
       MedicoProcedimento: this.medicosProcedimentos.map((medicoProcedimento) =>
-        medicoProcedimento.getData(),
+        medicoProcedimento.getData()
       ),
-    }
+    };
   }
 }

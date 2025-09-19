@@ -1,0 +1,109 @@
+<?xml version="1.0"?>
+<loteInternacao>
+  <Internacao>
+    <situacao>1</situacao>
+    <caraterInternacao>2</caraterInternacao>
+    <procedencia>M</procedencia>
+    <leito>101</leito>
+    <numeroOperadora>123456789012345</numeroOperadora>
+    <numeroRegistro>REG123</numeroRegistro>
+    <numeroAtendimento>12345</numeroAtendimento>
+    <numeroAutorizacao>AUT123</numeroAutorizacao>
+    <dataInternacao>2025-01-17T10:30:00</dataInternacao>
+    <dataAlta>2025-01-20T14:30:00</dataAlta>
+    <condicaoAlta>A</condicaoAlta>
+    <dataAutorizacao>2025-01-16T09:00:00</dataAutorizacao>
+    <codigoCidPrincipal>A41.9</codigoCidPrincipal>
+    <internadoOutrasVezes>N</internadoOutrasVezes>
+    <hospitalInternacaoAnterior>N</hospitalInternacaoAnterior>
+    <reinternacao>N</reinternacao>
+    <recaida>N</recaida>
+    <acao>INCLUIR</acao>
+    <nenhumDispositivoTerapeutico>N</nenhumDispositivoTerapeutico>
+    <nota>Paciente apresentou evolução favorável durante a internação.</nota>
+    <tipoNota>A</tipoNota>
+    <dataNota>2025-01-17T10:30:00</dataNota>
+    <Hospital>
+      <codigo>12345</codigo>
+      <nome>Hospital Teste</nome>
+      <cnes>1234567</cnes>
+      <porte>3</porte>
+      <complexidade>2</complexidade>
+      <esferaAdministrativa>4</esferaAdministrativa>
+      <uf>SP</uf>
+      <cidade>3550308</cidade>
+      <tipoLogradouro>RUA</tipoLogradouro>
+      <logradouro>Rua das Flores</logradouro>
+      <numeroLogradouro>123</numeroLogradouro>
+      <complementoLogradouro/>
+      <bairro>Centro</bairro>
+      <cep>01234567</cep>
+    </Hospital>
+    <Beneficiario>
+      <dataNascimento>1990-01-01T00:00:00</dataNascimento>
+      <sexo>M</sexo>
+      <cpf>12345678901</cpf>
+      <recemNascido>N</recemNascido>
+      <particular>N</particular>
+      <cns>123456789012345</cns>
+      <codigoIdentificacao>123456789012345</codigoIdentificacao>
+      <vulnerabilidadeSocial>N</vulnerabilidadeSocial>
+      <uf>SP</uf>
+      <cidade>3550308</cidade>
+      <tipoLogradouro>RUA</tipoLogradouro>
+      <logradouro>Rua do Paciente</logradouro>
+      <numeroLogradouro>456</numeroLogradouro>
+      <complementoLogradouro>Apto 101</complementoLogradouro>
+      <bairro>Centro</bairro>
+      <cep>01234567</cep>
+    </Beneficiario>
+    <Operadora>
+      <codigo>123456789012345</codigo>
+      <plano>Plano Premium</plano>
+      <numeroCarteira>123456789012345678901234567890</numeroCarteira>
+      <dataValidade>2025-12-31T23:59:59</dataValidade>
+    </Operadora>
+    <Medico>
+      <nome>Dr. João Silva</nome>
+      <ddd>11</ddd>
+      <telefone>987654321</telefone>
+      <email>joao.silva@hospital.com</email>
+      <uf>SP</uf>
+      <crm>123456</crm>
+      <especialidade>Clínica Médica</especialidade>
+      <medicoResponsavel>S</medicoResponsavel>
+      <tipoAtuacao>C</tipoAtuacao>
+    </Medico>
+    <Rn>
+      <pesoNascimento>3500</pesoNascimento>
+      <idadeGestacional>39.5</idadeGestacional>
+      <comprimento>50.5</comprimento>
+      <sexo>M</sexo>
+      <nascidoVivo>S</nascidoVivo>
+      <tocotraumatismo>N</tocotraumatismo>
+      <apgar>S</apgar>
+      <apgarQuintoMinuto>9</apgarQuintoMinuto>
+      <alta48horas>N</alta48horas>
+      <numeroAutorizacaoMae>AUT123</numeroAutorizacaoMae>
+      <numeroAtendimentoMae>ATD123</numeroAtendimentoMae>
+      <numeroCarteiraMae>CART123</numeroCarteiraMae>
+    </Rn>
+    <AnaliseCritica>
+      <dataAnalise>2025-01-17T14:30:00</dataAnalise>
+      <analiseCritica>Paciente apresentou evolução favorável durante a internação. Não houve complicações.</analiseCritica>
+    </AnaliseCritica>
+    <DispositivoTerapeutico>
+      <local>C</local>
+      <tipoTerapeutico>VMI2</tipoTerapeutico>
+      <dataInicial>2025-01-17T11:00:00</dataInicial>
+      <dataFinal>2025-01-17T15:00:00</dataFinal>
+    </DispositivoTerapeutico>
+    <CausaExternaPermanencia>
+      <descricao>Aguardando liberação de leito</descricao>
+      <tempo>2 dias</tempo>
+      <dataInicial>2025-01-18T08:00:00</dataInicial>
+      <dataFinal>2025-01-20T08:00:00</dataFinal>
+      <origem>H</origem>
+    </CausaExternaPermanencia>
+  </Internacao>
+</loteInternacao>
