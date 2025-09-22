@@ -55,7 +55,7 @@ export async function buildInternacao(item: any): Promise<Internacao> {
   // eslint-disable-next-line eqeqeq
   if (item.SITUACAO_INTERNACAO == 2 || item.SITUACAO_INTERNACAO == 3) {
     internacao.setAcao('COMPLEMENTAR')
-  }else if (item.SITUACAO_INTERNACAO = 5 ){
+  }else if (item.SITUACAO_INTERNACAO == 5 ){
     internacao.setAcao('EXCLUIR')
   } else {
     internacao.setAcao('')
