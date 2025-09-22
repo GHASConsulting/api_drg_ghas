@@ -11,7 +11,8 @@ export enum SituacaoInternacao {
     ADMISSIONAL = 1,
     TRANSFERENCIA = 2,
     ALTA = 3,
-    AUTORIZACAO = 4
+    AUTORIZACAO = 4,
+    EXCLUSAO = 5
 }
 
 export enum CaraterInternacao {
@@ -405,6 +406,26 @@ export interface DadosDRGSituacao4 extends DadosDRG {
     };
     beneficiario: CamposBeneficiario;
     operadora: CamposOperadora;
+}
+
+// Situação 5 - Exclusão
+export interface DadosDRGSituacao5 extends DadosDRG {
+    internacao: CamposInternacao & {
+        situacao: SituacaoInternacao.EXCLUSAO;
+    };
+    hospital: CamposHospital & {
+        esferaAdministrativa: string;
+        tipoLogradouro: string;
+        logradouro: string;
+        numeroLogradouro: string;
+        bairro: string;
+        uf: string;
+        cidade: string;
+        cep: string;
+    };
+    beneficiario: CamposBeneficiario;
+    operadora: CamposOperadora;
+    medico: CamposMedico;
 }
 
 // ============================================================================
