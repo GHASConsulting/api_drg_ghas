@@ -445,7 +445,8 @@ export interface ResultadoValidacao {
 // TIPOS UTILITÁRIOS
 // ============================================================================
 
-export type SituacaoDRG = 1 | 2 | 3 | 4;
+export type SituacaoDRG = 1 | 2 | 3 | 4 | 5;
+
 export type SecaoDRG =
     | 'hospital'
     | 'beneficiario'
