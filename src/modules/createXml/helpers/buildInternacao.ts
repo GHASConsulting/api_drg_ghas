@@ -1,19 +1,27 @@
-import knex from '../../../config/database'
-import { AltaAdministrativa } from '../../../models/altaAdministrativa'
-import { CondicaoAdquirida } from '../../../models/condicaoAdquirida'
-import { Internacao } from '../../../models/internacao'
-import { PartoAdequado } from '../../../models/partoAdequado'
-import { converterData } from '../../../utils/formatDate_yyyy-mm-dd'
-import { buildCateterVascularCentral } from './buildCateterVascularCentral'
-import { buildCidSecundario } from './buildCidSecundario'
-import { buildCti } from './buildCti'
-import { buildHospital } from './buildHospital'
-import { buildMedico } from './buildMedico'
-import { buildOperadora } from './buildOperadora'
-import { buildPaciente } from './buildPaciente'
-import { buildProcediemnto } from './buildProcedimento'
-import { buildSondaVesicalDeDemora } from './buildSondaVesicalDeDemora'
-import { buildSuporteVentilatorioFromDatabase } from './buildSuporteVentilatorioFromDatabase'
+import knex from "../../../config/database";
+import { AltaAdministrativa } from "../../../models/altaAdministrativa";
+import { CondicaoAdquirida } from "../../../models/condicaoAdquirida";
+import { Internacao } from "../../../models/internacao";
+import { PartoAdequado } from "../../../models/partoAdequado";
+import { converterData } from "../../../utils/formatDate_yyyy-mm-dd";
+import { buildCateterVascularCentral } from "./buildCateterVascularCentral";
+import { buildCidSecundario } from "./buildCidSecundario";
+import { buildCti } from "./buildCti";
+import { buildHospital } from "./buildHospital";
+import { buildMedico } from "./buildMedico";
+import { buildOperadora } from "./buildOperadora";
+import { buildPaciente } from "./buildPaciente";
+import { buildProcediemnto } from "./buildProcedimento";
+import { buildSondaVesicalDeDemora } from "./buildSondaVesicalDeDemora";
+import { buildSuporteVentilatorioFromDatabase } from "./buildSuporteVentilatorioFromDatabase";
+import { buildRN } from "./buildRN";
+import { buildDispositivoTerapeutico } from "./buildDispositivoTerapeutico";
+import { buildAltaAdministrativa } from "./buildAltaAdministrativa";
+import { buildAnaliseCritica } from "./buildAnaliseCritica";
+import { buildCausaExternaPermanencia } from "./buildCausaExternaPermanencia";
+import { buildCondicaoAdquiridaSuporteVentilatorio } from "./buildCondicaoAdquiridaSuporteVentilatorio";
+import { buildCondicaoAdquiridaSondaVesical } from "./buildCondicaoAdquiridaSondaVesical";
+import { buildCondicaoAdquiridaCateterVascular } from "./buildCondicaoAdquiridaCateterVascular";
 
 /**
  *
@@ -21,186 +29,320 @@ import { buildSuporteVentilatorioFromDatabase } from './buildSuporteVentilatorio
  * @returns every data of <internacao> tag for mount a XML.
  */
 export async function buildInternacao(item: any): Promise<Internacao> {
-  const TBL_MEDICO = process.env.TBL_MEDICO
-  const TBL_CID_SEC = process.env.TBL_CID_SEC
-  const TBL_PROCEDIMENTO = process.env.TBL_PROCEDIMENTO
-  const TBL_CTI = process.env.TBL_CTI
-  const TBL_SUPORTEVENTILATORIO = process.env.TBL_SUPORTEVENTILATORIO
-  const TBL_CATETERVASCULARCENTRAL = process.env.TBL_CATETERVASCULARCENTRAL
-  const TBL_SONDAVESICALDEDEMORA = process.env.TBL_SONDAVESICALDEDEMORA
-  const internacao = new Internacao()
+  const TBL_MEDICO = process.env.TBL_MEDICO;
+  const TBL_CID_SEC = process.env.TBL_CID_SEC;
+  const TBL_PROCEDIMENTO = process.env.TBL_PROCEDIMENTO;
+  const TBL_CTI = process.env.TBL_CTI;
+  const TBL_SUPORTEVENTILATORIO = process.env.TBL_SUPORTEVENTILATORIO;
+  const TBL_CATETERVASCULARCENTRAL = process.env.TBL_CATETERVASCULARCENTRAL;
+  const TBL_SONDAVESICALDEDEMORA = process.env.TBL_SONDAVESICALDEDEMORA;
+  const TBL_RN = process.env.TBL_RN;
+  const TBL_DISPOSITIVO_TERAPEUTICO = process.env.TBL_DISPOSITIVO_TERAPEUTICO;
+  const TBL_ALTA_ADMINISTRATIVA = process.env.TBL_ALTA_ADMINISTRATIVA;
+  const TBL_ANALISE_CRITICA = process.env.TBL_ANALISE_CRITICA;
+  const TBL_CAUSA_EXTERNA_PERMANENCIA =
+    process.env.TBL_CAUSA_EXTERNA_PERMANENCIA;
+  const TBL_COND_ADQ_SUP_VENT = process.env.TBL_COND_ADQ_SUP_VENT;
+  const TBL_COND_ADQ_SONDA = process.env.TBL_COND_ADQ_SONDA;
+  const TBL_COND_ADQ_CAT_VAS = process.env.TBL_COND_ADQ_CAT_VAS;
+  const internacao = new Internacao();
 
-  const CD_DTI_ATENDIMENTO = item.CD_DTI_ATENDIMENTO
-  internacao.setSituacao(item.SITUACAO_INTERNACAO)
-  internacao.setCaraterInternacao(item.CARATER_INTERNACAO)
-  internacao.setNumeroRegistro(item.NUMEROREGISTRO)
-  internacao.setNumeroAtendimento(item.NR_ATENDIMENTO)
-  internacao.setNumeroAutorizacao(item.NR_AUTORIZACAO)
+  const CD_DTI_ATENDIMENTO = item.CD_DTI_ATENDIMENTO;
+  internacao.setSituacao(item.SITUACAO_INTERNACAO);
+  internacao.setCaraterInternacao(item.CARATER_INTERNACAO);
+  internacao.setProcedencia(item.PROCEDENCIA_PACIENTE);
+  internacao.setNumeroRegistro(item.NUMEROREGISTRO);
+  internacao.setNumeroAtendimento(item.NR_ATENDIMENTO);
+  internacao.setNumeroAutorizacao(item.NR_AUTORIZACAO);
+  internacao.setNumeroOperadora(item.NR_OPERADORA_FONTE_PAGADORA);
   // console.log('item.dataAlta' + item.DT_ALTA)
-  internacao.setLeito(item.DS_LEITO)
+  internacao.setLeito(item.DS_LEITO);
   // const formatedDate: any = converterData(item.DT_INTERNACAO)
-  const formatedDate: any = converterData(item.DT_INTERNACAO)
+  const formatedDate: any = converterData(item.DT_INTERNACAO);
   // console.log("teste")
-  internacao.setDataInternacao(formatedDate)
+  internacao.setDataInternacao(formatedDate);
 
-  const formatedDateAlta: any = converterData(item.DT_ALTA)
-  internacao.setDataAlta(formatedDateAlta)
-  internacao.setCondicaoAlta(item.CONDICAO_ALTA)
-  internacao.setCodigoCidPrincipal(item.CD_CID_PRINCIPAL)
-  internacao.setDataAutorizacao(item.DT_AUTORIZACAO)
-  internacao.setInternadoOutrasVezes(item.INTERNADO_OUTRAS_VEZES)
-  internacao.setReiternacao(item.REITERNACAO)
-  internacao.setRecaida(item.RECAIDA)
+  const formatedDateAlta: any = converterData(item.DT_ALTA);
+  internacao.setDataAlta(formatedDateAlta);
+  internacao.setCondicaoAlta(item.CONDICAO_ALTA);
+  internacao.setCodigoCidPrincipal(item.CD_CID_PRINCIPAL);
+  internacao.setDataAutorizacao(item.DT_AUTORIZACAO);
+  internacao.setInternadoOutrasVezes(item.INTERNADO_OUTRAS_VEZES);
+  internacao.setReiternacao(item.REITERNACAO);
+  internacao.setRecaida(item.RECAIDA);
+  internacao.setNenhumDispositivoTerapeutico(
+    item.NENHUM_DISPOSITIVO_TERAPEUTICO
+  );
+  internacao.setNota(item.NOTA);
+  internacao.setTipoNota(item.TIPO_NOTA);
+  internacao.setDataNota(item.DT_NOTA);
 
   // eslint-disable-next-line eqeqeq
   if (item.SITUACAO_INTERNACAO == 2 || item.SITUACAO_INTERNACAO == 3) {
-    internacao.setAcao('COMPLEMENTAR')
-  }else if (item.SITUACAO_INTERNACAO == 5 ){
-    internacao.setAcao('EXCLUIR')
+    internacao.setAcao("COMPLEMENTAR");
+  } else if (item.SITUACAO_INTERNACAO == 5) {
+    internacao.setAcao("EXCLUIR");
   } else {
-    internacao.setAcao('')
+    internacao.setAcao("");
   }
 
+  const hospital = await buildHospital(item);
+  internacao.addHospital(hospital);
 
-
-  const hospital = await buildHospital(item)
-  internacao.addHospital(hospital)
-
-  const paciente = await buildPaciente(item)
+  const paciente = await buildPaciente(item);
   if (item.CD_OPERADORA) {
-    const operadora = await buildOperadora(item)
-    paciente.setParticular('N')
-    internacao.addOpradora(operadora)
+    const operadora = await buildOperadora(item);
+    paciente.setParticular("N");
+    internacao.addOpradora(operadora);
   } else {
-   paciente.setParticular('N')
-    console.log('setado pra N por que não tem operadora')
+    paciente.setParticular("N");
+    console.log("setado pra N por que não tem operadora");
   }
-  internacao.addPaciente(paciente)
+  internacao.addPaciente(paciente);
 
   const dataMedicoFromDatabase = await knex
     .select(
-      'CD_DTI_ATENDIMENTO',
-      'NM_MEDICO',
-      'DDD_MEDICO',
-      'NR_TELEFONE_MEDICO',
-      'EMAIL_MEDICO',
-      'UF_MEDICO',
-      'CRM_MEDICO',
-      'ESPECIALIDADE_MEDICO',
-      'MEDICO_RESPONSAVEL',
-      'TP_ATUACAO_MEDICO',
+      "CD_DTI_ATENDIMENTO",
+      "NM_MEDICO",
+      "DDD_MEDICO",
+      "NR_TELEFONE_MEDICO",
+      "EMAIL_MEDICO",
+      "UF_MEDICO",
+      "CRM_MEDICO",
+      "ESPECIALIDADE_MEDICO",
+      "MEDICO_RESPONSAVEL",
+      "TP_ATUACAO_MEDICO"
     )
-    .distinct('CRM_MEDICO')
+    .distinct("CRM_MEDICO")
     .from(TBL_MEDICO)
-    .where({ CD_DTI_ATENDIMENTO })
+    .where({ CD_DTI_ATENDIMENTO });
 
   for (const medicalItens of dataMedicoFromDatabase) {
-    const medico = await buildMedico(medicalItens)
-    internacao.addMedico(medico)
+    const medico = await buildMedico(medicalItens);
+    internacao.addMedico(medico);
   }
 
   const dataCidFromDatabase = await knex
-    .select('CD_CID')
+    .select("CD_CID")
     .from(TBL_CID_SEC)
-    .where({ CD_DTI_ATENDIMENTO })
+    .where({ CD_DTI_ATENDIMENTO });
   for (const cidItens of dataCidFromDatabase) {
-    const cidSecundario = await buildCidSecundario(cidItens)
-    internacao.addCidSecundario(cidSecundario)
+    const cidSecundario = await buildCidSecundario(cidItens);
+    internacao.addCidSecundario(cidSecundario);
   }
 
   const dataProcedimentoFromDatabase = await knex
     .select(
-      'CD_PROCEDIMENTO',
-      'DT_EXEC',
-      'DT_SOLIC',
-      'DT_FIM_EXEC',
-      'CD_CIRURGIA_AVISO',
+      "CD_PROCEDIMENTO",
+      "DT_EXEC",
+      "DT_SOLIC",
+      "DT_FIM_EXEC",
+      "CD_CIRURGIA_AVISO"
     )
-    .distinct('CD_CIRURGIA_AVISO')
+    .distinct("CD_CIRURGIA_AVISO")
     .from(TBL_PROCEDIMENTO)
-    .where({ CD_DTI_ATENDIMENTO })
+    .where({ CD_DTI_ATENDIMENTO });
 
   for (const procedimentoItens of dataProcedimentoFromDatabase) {
     const procedimento = await buildProcediemnto(
       procedimentoItens,
-      CD_DTI_ATENDIMENTO,
-    )
-    internacao.addProcedimento(procedimento)
+      CD_DTI_ATENDIMENTO
+    );
+    internacao.addProcedimento(procedimento);
   }
   const dataCtiFromDatabase = await knex
     .select(
-      'DT_INICIAL_CTI',
-      'DT_FINAL_CTI',
-      'CD_CID_PRINCIPAL',
-      'CONDICAO_ALTA_CTI',
-      'UF_CTI',
-      'CRM_CTI',
-      'NM_HOSPITAL',
-      'CD_HOSPITAL',
-      'DS_LEITO',
-      'TIPO',
+      "DT_INICIAL_CTI",
+      "DT_FINAL_CTI",
+      "CD_CID_PRINCIPAL",
+      "CONDICAO_ALTA_CTI",
+      "UF_CTI",
+      "CRM_CTI",
+      "NM_HOSPITAL",
+      "CD_HOSPITAL",
+      "DS_LEITO",
+      "TIPO"
     )
     .from(TBL_CTI)
-    .where({ CD_DTI_ATENDIMENTO })
+    .where({ CD_DTI_ATENDIMENTO });
   for (const ctiItens of dataCtiFromDatabase) {
-    const cti = await buildCti(ctiItens)
-    internacao.addCti(cti)
+    const cti = await buildCti(ctiItens);
+    internacao.addCti(cti);
   }
 
   const dataSuporteVentilatorioFromDatabase = await knex
     .select(
-      'CD_DTI_ATENDIMENTO',
-      'DT_INICIAL_SUP_VENTILATORIO',
-      'DT_FINAL_SUP_VENTILATORIO',
+      "CD_DTI_ATENDIMENTO",
+      "DT_INICIAL_SUP_VENTILATORIO",
+      "DT_FINAL_SUP_VENTILATORIO"
     )
     .from(TBL_SUPORTEVENTILATORIO)
-    .where({ CD_DTI_ATENDIMENTO })
+    .where({ CD_DTI_ATENDIMENTO });
 
   for (const suporteVentilatorioItem of dataSuporteVentilatorioFromDatabase) {
     const suporteVentilatorio = await buildSuporteVentilatorioFromDatabase(
-      suporteVentilatorioItem,
-    )
-    internacao.addSuporteVentilatorio(suporteVentilatorio)
+      suporteVentilatorioItem
+    );
+    internacao.addSuporteVentilatorio(suporteVentilatorio);
   }
 
-  const condicaoAdquirida = new CondicaoAdquirida()
-  condicaoAdquirida.setCodigoCondicaoAdquirida(item.CD_CONDICAO_ADQUIRIDA)
-  condicaoAdquirida.setDataOcorrencia(item.DT_OCORRENCIA_SUP)
-  internacao.addCondicaoAdquirida(condicaoAdquirida)
+  const condicaoAdquirida = new CondicaoAdquirida();
+  condicaoAdquirida.setCodigoCondicaoAdquirida(item.CD_CONDICAO_ADQUIRIDA);
+  condicaoAdquirida.setDataOcorrencia(item.DT_OCORRENCIA_SUP);
+  internacao.addCondicaoAdquirida(condicaoAdquirida);
 
-  const altaAdministrativa = new AltaAdministrativa()
-  altaAdministrativa.setNumeroAtendimento(item.NR_ATEND_ALTA_ADM)
-  altaAdministrativa.setNumeroAutorizacao(item.NR_AUTORIZACAO_ALTA_ADM)
-  internacao.addAltaAdministrativa(altaAdministrativa)
+  const altaAdministrativa = new AltaAdministrativa();
+  altaAdministrativa.setNumeroAtendimento(item.NR_ATEND_ALTA_ADM);
+  altaAdministrativa.setNumeroAutorizacao(item.NR_AUTORIZACAO_ALTA_ADM);
+  internacao.addAltaAdministrativa(altaAdministrativa);
 
-  const partoAdequado = new PartoAdequado()
-  partoAdequado.setMedicacaoInducaoParto(item.MEDICACAO_INDUCAO_PARTO)
-  partoAdequado.setCesariana(item.CESARIANA_PARTO_ADEQUADO)
-  partoAdequado.setNumeroPartosAnteriores(item.NR_PARTOS_ANTERIORES)
+  const partoAdequado = new PartoAdequado();
+  // Campos básicos já existentes
+  partoAdequado.setMedicacaoInducaoParto(item.MEDICACAO_INDUCAO_PARTO);
+  partoAdequado.setCesariana(item.CESARIANA_PARTO_ADEQUADO);
+  partoAdequado.setNumeroPartosAnteriores(item.NR_PARTOS_ANTERIORES);
 
-  internacao.addPartoAdequado(partoAdequado)
+  // Novos campos completos de Parto Adequado
+  partoAdequado.setAntecedentesObstetricos(item.ANTECEDENTES_OBSTETRICOS);
+  partoAdequado.setNumeroCesareasAnteriores(item.NUMERO_CESAREAS_ANTERIORES);
+  partoAdequado.setApresentacaoFetalRn1(item.APRESENTACAO_FETAL_RN1);
+  partoAdequado.setApresentacaoFetalRn2(item.APRESENTACAO_FETAL_RN2);
+  partoAdequado.setApresentacaoFetalRn3(item.APRESENTACAO_FETAL_RN3);
+  partoAdequado.setApresentacaoFetalRn4(item.APRESENTACAO_FETAL_RN4);
+  partoAdequado.setApresentacaoFetalRn5(item.APRESENTACAO_FETAL_RN5);
+  partoAdequado.setInicioTrabalhoParto(item.INICIO_TRABALHO_PARTO);
+  partoAdequado.setRupturaUterina(item.RUPTURA_UTERINA);
+  partoAdequado.setLaceracaoPerineal(item.LACERACAO_PERINEAL);
+  partoAdequado.setTransfusaoSanguinea(item.TRANSFUSAO_SANGUINEA);
+  partoAdequado.setMorteMaterna(item.MORTE_MATERNA);
+  partoAdequado.setMorteFetalIntraparto(item.MORTE_FETAL_INTRAPARTO);
+  partoAdequado.setAdmissaoMaternaUti(item.ADMISSAO_MATERNA_UTI);
+  partoAdequado.setRetornoSalaParto(item.RETORNO_SALA_PARTO);
+  partoAdequado.setIndiceSatisfacaoHospital(item.INDICE_SATISFACAO_HOSPITAL);
+  partoAdequado.setIndiceSatisfacaoEquipe(item.INDICE_SATISFACAO_EQUIPE);
+  partoAdequado.setHouveContatoPele(item.HOUVE_CONTATO_PELE);
+  partoAdequado.setPosicaoParto(item.POSICAO_PARTO);
+  partoAdequado.setUsoOcitocinaMisoprostol(item.USO_OCITOCINA_MISOPROSTOL);
+  partoAdequado.setParturienteAcompanhada(item.PARTURIENTE_ACOMPANHADA);
+  partoAdequado.setPresencaDoula(item.PRESENCA_DOULA);
+  partoAdequado.setRealizadaEpisiotomia(item.REALIZADA_EPISIOTOMIA);
+  partoAdequado.setHouveAleitamentoMaterno(item.HOUVE_ALEITAMENTO_MATERNO);
+  partoAdequado.setQuandoOcorreuClampeamento(item.QUANDO_OCORREU_CLAMPAMENTO);
+  partoAdequado.setHouveMetodosAnalgesia(item.HOUVE_METODOS_ANALGESIA);
+  partoAdequado.setMetodoAnalgesia(item.METODO_ANALGESIA);
+  partoAdequado.setPerimetroCefalicoRn1(item.PERIMETRO_CEFALICO_RN1);
+  partoAdequado.setPerimetroCefalicoRn2(item.PERIMETRO_CEFALICO_RN2);
+  partoAdequado.setPerimetroCefalicoRn3(item.PERIMETRO_CEFALICO_RN3);
+  partoAdequado.setPerimetroCefalicoRn4(item.PERIMETRO_CEFALICO_RN4);
+  partoAdequado.setPerimetroCefalicoRn5(item.PERIMETRO_CEFALICO_RN5);
+
+  internacao.addPartoAdequado(partoAdequado);
 
   const dataSondaVesicalDeDemoraFromDatabase = await knex
-    .select('*')
+    .select("*")
     .from(TBL_SONDAVESICALDEDEMORA)
-    .where({ CD_DTI_ATENDIMENTO })
+    .where({ CD_DTI_ATENDIMENTO });
 
   for (const itemSonda of dataSondaVesicalDeDemoraFromDatabase) {
-    const sondaVesicalDeDemora = await buildSondaVesicalDeDemora(itemSonda)
-    internacao.addSondaVesicalDeDemora(sondaVesicalDeDemora)
+    const sondaVesicalDeDemora = await buildSondaVesicalDeDemora(itemSonda);
+    internacao.addSondaVesicalDeDemora(sondaVesicalDeDemora);
   }
 
   const dataCateterVascularCentralFromDatabase = await knex
-    .select('*')
+    .select("*")
     .from(TBL_CATETERVASCULARCENTRAL)
-    .where({ CD_DTI_ATENDIMENTO })
+    .where({ CD_DTI_ATENDIMENTO });
 
   for (const itemCateter of dataCateterVascularCentralFromDatabase) {
     const cateterVascularCentral =
-      await buildCateterVascularCentral(itemCateter)
+      await buildCateterVascularCentral(itemCateter);
 
-    internacao.addCateterVascularCentral(cateterVascularCentral)
+    internacao.addCateterVascularCentral(cateterVascularCentral);
   }
 
-  return internacao
+  // Integração dos novos builds
+  const dataRNFromDatabase = await knex
+    .select("*")
+    .from(TBL_RN)
+    .where({ CD_DTI_ATENDIMENTO });
+
+  for (const rnItem of dataRNFromDatabase) {
+    const rn = await buildRN(rnItem);
+    internacao.addRn(rn);
+  }
+
+  const dataDispositivoTerapeuticoFromDatabase = await knex
+    .select("*")
+    .from(TBL_DISPOSITIVO_TERAPEUTICO)
+    .where({ CD_DTI_ATENDIMENTO });
+
+  for (const dispositivoItem of dataDispositivoTerapeuticoFromDatabase) {
+    const dispositivo = await buildDispositivoTerapeutico(dispositivoItem);
+    internacao.addDispositivoTerapeutico(dispositivo);
+  }
+
+  const dataAltaAdministrativaFromDatabase = await knex
+    .select("*")
+    .from(TBL_ALTA_ADMINISTRATIVA)
+    .where({ CD_DTI_ATENDIMENTO });
+
+  for (const altaItem of dataAltaAdministrativaFromDatabase) {
+    const alta = await buildAltaAdministrativa(altaItem);
+    internacao.addAltaAdministrativa(alta);
+  }
+
+  const dataAnaliseCriticaFromDatabase = await knex
+    .select("*")
+    .from(TBL_ANALISE_CRITICA)
+    .where({ CD_DTI_ATENDIMENTO });
+
+  for (const analiseItem of dataAnaliseCriticaFromDatabase) {
+    const analise = await buildAnaliseCritica(analiseItem);
+    internacao.addAnaliseCritica(analise);
+  }
+
+  const dataCausaExternaPermanenciaFromDatabase = await knex
+    .select("*")
+    .from(TBL_CAUSA_EXTERNA_PERMANENCIA)
+    .where({ CD_DTI_ATENDIMENTO });
+
+  for (const causaItem of dataCausaExternaPermanenciaFromDatabase) {
+    const causa = await buildCausaExternaPermanencia(causaItem);
+    internacao.addCausaExternaPermanencia(causa);
+  }
+
+  const dataCondicaoAdquiridaSuporteVentilatorioFromDatabase = await knex
+    .select("*")
+    .from(TBL_COND_ADQ_SUP_VENT)
+    .where({ CD_DTI_ATENDIMENTO });
+
+  for (const condicaoVentItem of dataCondicaoAdquiridaSuporteVentilatorioFromDatabase) {
+    const condicaoVent =
+      await buildCondicaoAdquiridaSuporteVentilatorio(condicaoVentItem);
+    internacao.addCondicaoAdquiridaSuporteVentilatorio(condicaoVent);
+  }
+
+  const dataCondicaoAdquiridaSondaFromDatabase = await knex
+    .select("*")
+    .from(TBL_COND_ADQ_SONDA)
+    .where({ CD_DTI_ATENDIMENTO });
+
+  for (const condicaoSondaItem of dataCondicaoAdquiridaSondaFromDatabase) {
+    const condicaoSonda =
+      await buildCondicaoAdquiridaSondaVesical(condicaoSondaItem);
+    internacao.addCondicaoAdquiridaSondaVesicalDeDemora(condicaoSonda);
+  }
+
+  const dataCondicaoAdquiridaCateterFromDatabase = await knex
+    .select("*")
+    .from(TBL_COND_ADQ_CAT_VAS)
+    .where({ CD_DTI_ATENDIMENTO });
+
+  for (const condicaoCateterItem of dataCondicaoAdquiridaCateterFromDatabase) {
+    const condicaoCateter =
+      await buildCondicaoAdquiridaCateterVascular(condicaoCateterItem);
+    internacao.addCondicaoAdquiridaCateterVascularCentral(condicaoCateter);
+  }
+
+  return internacao;
 }

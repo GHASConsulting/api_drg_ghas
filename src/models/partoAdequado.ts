@@ -86,6 +86,135 @@ export class PartoAdequado {
     this.numeroPartosAnteriores = numeroPartosAnteriores;
   }
 
+  // Setters para todos os campos de Parto Adequado
+  public setAntecedentesObstetricos(antecedentesObstetricos: string): void {
+    this.antecedentesObstetricos = antecedentesObstetricos;
+  }
+
+  public setNumeroCesareasAnteriores(numeroCesareasAnteriores: string): void {
+    this.numeroCesareasAnteriores = numeroCesareasAnteriores;
+  }
+
+  public setApresentacaoFetalRn1(apresentacaoFetalRn1: string): void {
+    this.apresentacaoFetalRn1 = apresentacaoFetalRn1;
+  }
+
+  public setApresentacaoFetalRn2(apresentacaoFetalRn2: string): void {
+    this.apresentacaoFetalRn2 = apresentacaoFetalRn2;
+  }
+
+  public setApresentacaoFetalRn3(apresentacaoFetalRn3: string): void {
+    this.apresentacaoFetalRn3 = apresentacaoFetalRn3;
+  }
+
+  public setApresentacaoFetalRn4(apresentacaoFetalRn4: string): void {
+    this.apresentacaoFetalRn4 = apresentacaoFetalRn4;
+  }
+
+  public setApresentacaoFetalRn5(apresentacaoFetalRn5: string): void {
+    this.apresentacaoFetalRn5 = apresentacaoFetalRn5;
+  }
+
+  public setInicioTrabalhoParto(inicioTrabalhoParto: string): void {
+    this.inicioTrabalhoParto = inicioTrabalhoParto;
+  }
+
+  public setRupturaUterina(rupturaUterina: string): void {
+    this.rupturaUterina = rupturaUterina;
+  }
+
+  public setLaceracaoPerineal(laceracaoPerineal: string): void {
+    this.laceracaoPerineal = laceracaoPerineal;
+  }
+
+  public setTransfusaoSanguinea(transfusaoSanguinea: string): void {
+    this.transfusaoSanguinea = transfusaoSanguinea;
+  }
+
+  public setMorteMaterna(morteMaterna: string): void {
+    this.morteMaterna = morteMaterna;
+  }
+
+  public setMorteFetalIntraparto(morteFetalIntraparto: string): void {
+    this.morteFetalIntraparto = morteFetalIntraparto;
+  }
+
+  public setAdmissaoMaternaUti(admissaoMaternaUti: string): void {
+    this.admissaoMaternaUti = admissaoMaternaUti;
+  }
+
+  public setRetornoSalaParto(retornoSalaParto: string): void {
+    this.retornoSalaParto = retornoSalaParto;
+  }
+
+  public setIndiceSatisfacaoHospital(indiceSatisfacaoHospital: string): void {
+    this.indiceSatisfacaoHospital = indiceSatisfacaoHospital;
+  }
+
+  public setIndiceSatisfacaoEquipe(indiceSatisfacaoEquipe: string): void {
+    this.indiceSatisfacaoEquipe = indiceSatisfacaoEquipe;
+  }
+
+  public setHouveContatoPele(houveContatoPele: string): void {
+    this.houveContatoPele = houveContatoPele;
+  }
+
+  public setPosicaoParto(posicaoParto: string): void {
+    this.posicaoParto = posicaoParto;
+  }
+
+  public setUsoOcitocinaMisoprostol(usoOcitocinaMisoprostol: string): void {
+    this.usoOcitocinaMisoprostol = usoOcitocinaMisoprostol;
+  }
+
+  public setParturienteAcompanhada(parturienteAcompanhada: string): void {
+    this.parturienteAcompanhada = parturienteAcompanhada;
+  }
+
+  public setPresencaDoula(presencaDoula: string): void {
+    this.presencaDoula = presencaDoula;
+  }
+
+  public setRealizadaEpisiotomia(realizadaEpisiotomia: string): void {
+    this.realizadaEpisiotomia = realizadaEpisiotomia;
+  }
+
+  public setHouveAleitamentoMaterno(houveAleitamentoMaterno: string): void {
+    this.houveAleitamentoMaterno = houveAleitamentoMaterno;
+  }
+
+  public setQuandoOcorreuClampeamento(quandoOcorreuClampeamento: string): void {
+    this.quandoOcorreuClampeamento = quandoOcorreuClampeamento;
+  }
+
+  public setHouveMetodosAnalgesia(houveMetodosAnalgesia: string): void {
+    this.houveMetodosAnalgesia = houveMetodosAnalgesia;
+  }
+
+  public setMetodoAnalgesia(metodoAnalgesia: string): void {
+    this.metodoAnalgesia = metodoAnalgesia;
+  }
+
+  public setPerimetroCefalicoRn1(perimetroCefalicoRn1: string): void {
+    this.perimetroCefalicoRn1 = perimetroCefalicoRn1;
+  }
+
+  public setPerimetroCefalicoRn2(perimetroCefalicoRn2: string): void {
+    this.perimetroCefalicoRn2 = perimetroCefalicoRn2;
+  }
+
+  public setPerimetroCefalicoRn3(perimetroCefalicoRn3: string): void {
+    this.perimetroCefalicoRn3 = perimetroCefalicoRn3;
+  }
+
+  public setPerimetroCefalicoRn4(perimetroCefalicoRn4: string): void {
+    this.perimetroCefalicoRn4 = perimetroCefalicoRn4;
+  }
+
+  public setPerimetroCefalicoRn5(perimetroCefalicoRn5: string): void {
+    this.perimetroCefalicoRn5 = perimetroCefalicoRn5;
+  }
+
   public getData(): object {
     return {
       antecedentesObstetricos: this.antecedentesObstetricos,
