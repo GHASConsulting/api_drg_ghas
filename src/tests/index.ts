@@ -4,6 +4,8 @@ import { TestReporter } from "./testReporter";
 import { AdmissionalTestScenarios } from "./scenarios/admissional.test";
 import { ProrrogacaoTestScenarios } from "./scenarios/prorrogacao.test";
 import { SuplementarTestScenarios } from "./scenarios/suplementar.test";
+import { ModuleControlTestSuite } from "./moduleControl.test";
+import { PartoAdequadoTestScenarios } from "./scenarios/partoAdequado.test";
 
 export class DRGTestSuite {
   private dataGenerator: TestDataGenerator;
@@ -12,6 +14,8 @@ export class DRGTestSuite {
   private admissionalScenarios: AdmissionalTestScenarios;
   private prorrogacaoScenarios: ProrrogacaoTestScenarios;
   private suplementarScenarios: SuplementarTestScenarios;
+  private moduleControlTests: ModuleControlTestSuite;
+  private partoAdequadoScenarios: PartoAdequadoTestScenarios;
 
   constructor() {
     this.dataGenerator = new TestDataGenerator();
@@ -26,6 +30,11 @@ export class DRGTestSuite {
       this.testRunner
     );
     this.suplementarScenarios = new SuplementarTestScenarios(
+      this.dataGenerator,
+      this.testRunner
+    );
+    this.moduleControlTests = new ModuleControlTestSuite();
+    this.partoAdequadoScenarios = new PartoAdequadoTestScenarios(
       this.dataGenerator,
       this.testRunner
     );
@@ -49,6 +58,17 @@ export class DRGTestSuite {
     await this.admissionalScenarios.runAllScenarios();
     await this.prorrogacaoScenarios.runAllScenarios();
     await this.suplementarScenarios.runAllScenarios();
+
+    // Executa testes de controle de módulos
+    console.log("🔧 Executando testes de controle de módulos...");
+    const moduleControlResults = await this.moduleControlTests.runAllTests();
+    this.reporter.addResults(moduleControlResults.results);
+
+    // Executa cenários de parto adequado
+    console.log("👶 Executando cenários de parto adequado...");
+    const partoAdequadoResults =
+      await this.partoAdequadoScenarios.runAllScenarios();
+    this.reporter.addResults(partoAdequadoResults.results);
 
     // Coleta todos os resultados
     const allResults = this.testRunner.getResults();
@@ -88,6 +108,61 @@ export class DRGTestSuite {
     this.reporter.addResults(results);
 
     console.log(`✅ Testes para situação ${situacao} executados!`);
+  }
+
+  /**
+   * Executa apenas testes de controle de módulos
+   */
+  async runModuleControlTests(): Promise<void> {
+    console.log("🔧 Executando testes de controle de módulos...");
+
+    const results = await this.moduleControlTests.runAllTests();
+    this.reporter.addResults(results.results);
+
+    console.log(
+      `✅ Testes de controle de módulos executados! (${results.passed} passaram, ${results.failed} falharam)`
+    );
+  }
+
+  /**
+   * Executa apenas cenários de parto adequado
+   */
+  async runPartoAdequadoTests(): Promise<void> {
+    console.log("👶 Executando cenários de parto adequado...");
+
+    const results = await this.partoAdequadoScenarios.runAllScenarios();
+    this.reporter.addResults(results.results);
+
+    console.log(
+      `✅ Cenários de parto adequado executados! (${results.passed} passaram, ${results.failed} falharam)`
+    );
+  }
+
+  /**
+   * Executa testes de monitoramento e otimização
+   */
+  async runMonitoringTests(): Promise<void> {
+    console.log("📊 Executando testes de monitoramento...");
+
+    // Executa testes de controle de módulos (inclui monitoramento)
+    const moduleControlResults = await this.moduleControlTests.runAllTests();
+
+    // Filtra apenas testes relacionados a monitoramento
+    const monitoringTests = moduleControlResults.results.filter(
+      (result) =>
+        result.name.includes("Monitoramento") ||
+        result.name.includes("Otimização") ||
+        result.name.includes("Exportação")
+    );
+
+    this.reporter.addResults(monitoringTests);
+
+    const passed = monitoringTests.filter((t) => t.passed).length;
+    const failed = monitoringTests.filter((t) => !t.passed).length;
+
+    console.log(
+      `✅ Testes de monitoramento executados! (${passed} passaram, ${failed} falharam)`
+    );
   }
 
   async runSpecificScenario(

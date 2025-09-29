@@ -22,6 +22,7 @@ import { buildCausaExternaPermanencia } from "./buildCausaExternaPermanencia";
 import { buildCondicaoAdquiridaSuporteVentilatorio } from "./buildCondicaoAdquiridaSuporteVentilatorio";
 import { buildCondicaoAdquiridaSondaVesical } from "./buildCondicaoAdquiridaSondaVesical";
 import { buildCondicaoAdquiridaCateterVascular } from "./buildCondicaoAdquiridaCateterVascular";
+import { ModuleControl } from "../../../utils/moduleControl";
 
 /**
  *
@@ -29,6 +30,14 @@ import { buildCondicaoAdquiridaCateterVascular } from "./buildCondicaoAdquiridaC
  * @returns every data of <internacao> tag for mount a XML.
  */
 export async function buildInternacao(item: any): Promise<Internacao> {
+  // Validação de módulos obrigatórios
+  if (!ModuleControl.validateRequiredModules()) {
+    throw new Error("Módulos obrigatórios não estão ativos");
+  }
+
+  // Log de módulos ativos
+  ModuleControl.logActiveModules();
+
   const TBL_MEDICO = process.env.TBL_MEDICO;
   const TBL_CID_SEC = process.env.TBL_CID_SEC;
   const TBL_PROCEDIMENTO = process.env.TBL_PROCEDIMENTO;
@@ -150,198 +159,253 @@ export async function buildInternacao(item: any): Promise<Internacao> {
     );
     internacao.addProcedimento(procedimento);
   }
-  const dataCtiFromDatabase = await knex
-    .select(
-      "DT_INICIAL_CTI",
-      "DT_FINAL_CTI",
-      "CD_CID_PRINCIPAL",
-      "CONDICAO_ALTA_CTI",
-      "UF_CTI",
-      "CRM_CTI",
-      "NM_HOSPITAL",
-      "CD_HOSPITAL",
-      "DS_LEITO",
-      "TIPO"
-    )
-    .from(TBL_CTI)
-    .where({ CD_DTI_ATENDIMENTO });
-  for (const ctiItens of dataCtiFromDatabase) {
-    const cti = await buildCti(ctiItens);
-    internacao.addCti(cti);
+  // CTI - Módulo opcional
+  if (ModuleControl.shouldSendModule("CTI")) {
+    ModuleControl.startModuleMonitoring("CTI");
+    const dataCtiFromDatabase = await knex
+      .select(
+        "DT_INICIAL_CTI",
+        "DT_FINAL_CTI",
+        "CD_CID_PRINCIPAL",
+        "CONDICAO_ALTA_CTI",
+        "UF_CTI",
+        "CRM_CTI",
+        "NM_HOSPITAL",
+        "CD_HOSPITAL",
+        "DS_LEITO",
+        "TIPO"
+      )
+      .from(TBL_CTI)
+      .where({ CD_DTI_ATENDIMENTO });
+    for (const ctiItens of dataCtiFromDatabase) {
+      const cti = await buildCti(ctiItens);
+      internacao.addCti(cti);
+    }
+    ModuleControl.endModuleMonitoring("CTI");
+  } else {
+    ModuleControl.recordModuleSkipped("CTI");
   }
 
-  const dataSuporteVentilatorioFromDatabase = await knex
-    .select(
-      "CD_DTI_ATENDIMENTO",
-      "DT_INICIAL_SUP_VENTILATORIO",
-      "DT_FINAL_SUP_VENTILATORIO"
-    )
-    .from(TBL_SUPORTEVENTILATORIO)
-    .where({ CD_DTI_ATENDIMENTO });
+  // Suporte Ventilatório - Módulo opcional
+  if (ModuleControl.shouldSendModule("SUPORTE_VENTILATORIO")) {
+    ModuleControl.startModuleMonitoring("SUPORTE_VENTILATORIO");
+    const dataSuporteVentilatorioFromDatabase = await knex
+      .select(
+        "CD_DTI_ATENDIMENTO",
+        "DT_INICIAL_SUP_VENTILATORIO",
+        "DT_FINAL_SUP_VENTILATORIO"
+      )
+      .from(TBL_SUPORTEVENTILATORIO)
+      .where({ CD_DTI_ATENDIMENTO });
 
-  for (const suporteVentilatorioItem of dataSuporteVentilatorioFromDatabase) {
-    const suporteVentilatorio = await buildSuporteVentilatorioFromDatabase(
-      suporteVentilatorioItem
-    );
-    internacao.addSuporteVentilatorio(suporteVentilatorio);
+    for (const suporteVentilatorioItem of dataSuporteVentilatorioFromDatabase) {
+      const suporteVentilatorio = await buildSuporteVentilatorioFromDatabase(
+        suporteVentilatorioItem
+      );
+      internacao.addSuporteVentilatorio(suporteVentilatorio);
+    }
+    ModuleControl.endModuleMonitoring("SUPORTE_VENTILATORIO");
+  } else {
+    ModuleControl.recordModuleSkipped("SUPORTE_VENTILATORIO");
   }
 
-  const condicaoAdquirida = new CondicaoAdquirida();
-  condicaoAdquirida.setCodigoCondicaoAdquirida(item.CD_CONDICAO_ADQUIRIDA);
-  condicaoAdquirida.setDataOcorrencia(item.DT_OCORRENCIA_SUP);
-  internacao.addCondicaoAdquirida(condicaoAdquirida);
-
-  const altaAdministrativa = new AltaAdministrativa();
-  altaAdministrativa.setNumeroAtendimento(item.NR_ATEND_ALTA_ADM);
-  altaAdministrativa.setNumeroAutorizacao(item.NR_AUTORIZACAO_ALTA_ADM);
-  internacao.addAltaAdministrativa(altaAdministrativa);
-
-  const partoAdequado = new PartoAdequado();
-  // Campos básicos já existentes
-  partoAdequado.setMedicacaoInducaoParto(item.MEDICACAO_INDUCAO_PARTO);
-  partoAdequado.setCesariana(item.CESARIANA_PARTO_ADEQUADO);
-  partoAdequado.setNumeroPartosAnteriores(item.NR_PARTOS_ANTERIORES);
-
-  // Novos campos completos de Parto Adequado
-  partoAdequado.setAntecedentesObstetricos(item.ANTECEDENTES_OBSTETRICOS);
-  partoAdequado.setNumeroCesareasAnteriores(item.NUMERO_CESAREAS_ANTERIORES);
-  partoAdequado.setApresentacaoFetalRn1(item.APRESENTACAO_FETAL_RN1);
-  partoAdequado.setApresentacaoFetalRn2(item.APRESENTACAO_FETAL_RN2);
-  partoAdequado.setApresentacaoFetalRn3(item.APRESENTACAO_FETAL_RN3);
-  partoAdequado.setApresentacaoFetalRn4(item.APRESENTACAO_FETAL_RN4);
-  partoAdequado.setApresentacaoFetalRn5(item.APRESENTACAO_FETAL_RN5);
-  partoAdequado.setInicioTrabalhoParto(item.INICIO_TRABALHO_PARTO);
-  partoAdequado.setRupturaUterina(item.RUPTURA_UTERINA);
-  partoAdequado.setLaceracaoPerineal(item.LACERACAO_PERINEAL);
-  partoAdequado.setTransfusaoSanguinea(item.TRANSFUSAO_SANGUINEA);
-  partoAdequado.setMorteMaterna(item.MORTE_MATERNA);
-  partoAdequado.setMorteFetalIntraparto(item.MORTE_FETAL_INTRAPARTO);
-  partoAdequado.setAdmissaoMaternaUti(item.ADMISSAO_MATERNA_UTI);
-  partoAdequado.setRetornoSalaParto(item.RETORNO_SALA_PARTO);
-  partoAdequado.setIndiceSatisfacaoHospital(item.INDICE_SATISFACAO_HOSPITAL);
-  partoAdequado.setIndiceSatisfacaoEquipe(item.INDICE_SATISFACAO_EQUIPE);
-  partoAdequado.setHouveContatoPele(item.HOUVE_CONTATO_PELE);
-  partoAdequado.setPosicaoParto(item.POSICAO_PARTO);
-  partoAdequado.setUsoOcitocinaMisoprostol(item.USO_OCITOCINA_MISOPROSTOL);
-  partoAdequado.setParturienteAcompanhada(item.PARTURIENTE_ACOMPANHADA);
-  partoAdequado.setPresencaDoula(item.PRESENCA_DOULA);
-  partoAdequado.setRealizadaEpisiotomia(item.REALIZADA_EPISIOTOMIA);
-  partoAdequado.setHouveAleitamentoMaterno(item.HOUVE_ALEITAMENTO_MATERNO);
-  partoAdequado.setQuandoOcorreuClampeamento(item.QUANDO_OCORREU_CLAMPAMENTO);
-  partoAdequado.setHouveMetodosAnalgesia(item.HOUVE_METODOS_ANALGESIA);
-  partoAdequado.setMetodoAnalgesia(item.METODO_ANALGESIA);
-  partoAdequado.setPerimetroCefalicoRn1(item.PERIMETRO_CEFALICO_RN1);
-  partoAdequado.setPerimetroCefalicoRn2(item.PERIMETRO_CEFALICO_RN2);
-  partoAdequado.setPerimetroCefalicoRn3(item.PERIMETRO_CEFALICO_RN3);
-  partoAdequado.setPerimetroCefalicoRn4(item.PERIMETRO_CEFALICO_RN4);
-  partoAdequado.setPerimetroCefalicoRn5(item.PERIMETRO_CEFALICO_RN5);
-
-  internacao.addPartoAdequado(partoAdequado);
-
-  const dataSondaVesicalDeDemoraFromDatabase = await knex
-    .select("*")
-    .from(TBL_SONDAVESICALDEDEMORA)
-    .where({ CD_DTI_ATENDIMENTO });
-
-  for (const itemSonda of dataSondaVesicalDeDemoraFromDatabase) {
-    const sondaVesicalDeDemora = await buildSondaVesicalDeDemora(itemSonda);
-    internacao.addSondaVesicalDeDemora(sondaVesicalDeDemora);
+  // Condição Adquirida - Módulo opcional
+  if (ModuleControl.shouldSendModule("CONDICAO_ADQUIRIDA")) {
+    ModuleControl.startModuleMonitoring("CONDICAO_ADQUIRIDA");
+    const condicaoAdquirida = new CondicaoAdquirida();
+    condicaoAdquirida.setCodigoCondicaoAdquirida(item.CD_CONDICAO_ADQUIRIDA);
+    condicaoAdquirida.setDataOcorrencia(item.DT_OCORRENCIA_SUP);
+    internacao.addCondicaoAdquirida(condicaoAdquirida);
+    ModuleControl.endModuleMonitoring("CONDICAO_ADQUIRIDA");
+  } else {
+    ModuleControl.recordModuleSkipped("CONDICAO_ADQUIRIDA");
   }
 
-  const dataCateterVascularCentralFromDatabase = await knex
-    .select("*")
-    .from(TBL_CATETERVASCULARCENTRAL)
-    .where({ CD_DTI_ATENDIMENTO });
-
-  for (const itemCateter of dataCateterVascularCentralFromDatabase) {
-    const cateterVascularCentral =
-      await buildCateterVascularCentral(itemCateter);
-
-    internacao.addCateterVascularCentral(cateterVascularCentral);
+  // Alta Administrativa - Módulo opcional
+  if (ModuleControl.shouldSendModule("ALTA_ADMINISTRATIVA")) {
+    const altaAdministrativa = new AltaAdministrativa();
+    altaAdministrativa.setNumeroAtendimento(item.NR_ATEND_ALTA_ADM);
+    altaAdministrativa.setNumeroAutorizacao(item.NR_AUTORIZACAO_ALTA_ADM);
+    internacao.addAltaAdministrativa(altaAdministrativa);
   }
 
-  // Integração dos novos builds
-  const dataRNFromDatabase = await knex
-    .select("*")
-    .from(TBL_RN)
-    .where({ CD_DTI_ATENDIMENTO });
+  // Parto Adequado - Módulo especial
+  if (ModuleControl.shouldSendModule("PARTO_ADEQUADO")) {
+    const partoAdequado = new PartoAdequado();
+    // Campos básicos já existentes
+    partoAdequado.setMedicacaoInducaoParto(item.MEDICACAO_INDUCAO_PARTO);
+    partoAdequado.setCesariana(item.CESARIANA_PARTO_ADEQUADO);
+    partoAdequado.setNumeroPartosAnteriores(item.NR_PARTOS_ANTERIORES);
 
-  for (const rnItem of dataRNFromDatabase) {
-    const rn = await buildRN(rnItem);
-    internacao.addRn(rn);
+    // Novos campos completos de Parto Adequado
+    partoAdequado.setAntecedentesObstetricos(item.ANTECEDENTES_OBSTETRICOS);
+    partoAdequado.setNumeroCesareasAnteriores(item.NUMERO_CESAREAS_ANTERIORES);
+    partoAdequado.setApresentacaoFetalRn1(item.APRESENTACAO_FETAL_RN1);
+    partoAdequado.setApresentacaoFetalRn2(item.APRESENTACAO_FETAL_RN2);
+    partoAdequado.setApresentacaoFetalRn3(item.APRESENTACAO_FETAL_RN3);
+    partoAdequado.setApresentacaoFetalRn4(item.APRESENTACAO_FETAL_RN4);
+    partoAdequado.setApresentacaoFetalRn5(item.APRESENTACAO_FETAL_RN5);
+    partoAdequado.setInicioTrabalhoParto(item.INICIO_TRABALHO_PARTO);
+    partoAdequado.setRupturaUterina(item.RUPTURA_UTERINA);
+    partoAdequado.setLaceracaoPerineal(item.LACERACAO_PERINEAL);
+    partoAdequado.setTransfusaoSanguinea(item.TRANSFUSAO_SANGUINEA);
+    partoAdequado.setMorteMaterna(item.MORTE_MATERNA);
+    partoAdequado.setMorteFetalIntraparto(item.MORTE_FETAL_INTRAPARTO);
+    partoAdequado.setAdmissaoMaternaUti(item.ADMISSAO_MATERNA_UTI);
+    partoAdequado.setRetornoSalaParto(item.RETORNO_SALA_PARTO);
+    partoAdequado.setIndiceSatisfacaoHospital(item.INDICE_SATISFACAO_HOSPITAL);
+    partoAdequado.setIndiceSatisfacaoEquipe(item.INDICE_SATISFACAO_EQUIPE);
+    partoAdequado.setHouveContatoPele(item.HOUVE_CONTATO_PELE);
+    partoAdequado.setPosicaoParto(item.POSICAO_PARTO);
+    partoAdequado.setUsoOcitocinaMisoprostol(item.USO_OCITOCINA_MISOPROSTOL);
+    partoAdequado.setParturienteAcompanhada(item.PARTURIENTE_ACOMPANHADA);
+    partoAdequado.setPresencaDoula(item.PRESENCA_DOULA);
+    partoAdequado.setRealizadaEpisiotomia(item.REALIZADA_EPISIOTOMIA);
+    partoAdequado.setHouveAleitamentoMaterno(item.HOUVE_ALEITAMENTO_MATERNO);
+    partoAdequado.setQuandoOcorreuClampeamento(item.QUANDO_OCORREU_CLAMPAMENTO);
+    partoAdequado.setHouveMetodosAnalgesia(item.HOUVE_METODOS_ANALGESIA);
+    partoAdequado.setMetodoAnalgesia(item.METODO_ANALGESIA);
+    partoAdequado.setPerimetroCefalicoRn1(item.PERIMETRO_CEFALICO_RN1);
+    partoAdequado.setPerimetroCefalicoRn2(item.PERIMETRO_CEFALICO_RN2);
+    partoAdequado.setPerimetroCefalicoRn3(item.PERIMETRO_CEFALICO_RN3);
+    partoAdequado.setPerimetroCefalicoRn4(item.PERIMETRO_CEFALICO_RN4);
+    partoAdequado.setPerimetroCefalicoRn5(item.PERIMETRO_CEFALICO_RN5);
+    internacao.addPartoAdequado(partoAdequado);
   }
 
-  const dataDispositivoTerapeuticoFromDatabase = await knex
-    .select("*")
-    .from(TBL_DISPOSITIVO_TERAPEUTICO)
-    .where({ CD_DTI_ATENDIMENTO });
+  // Sonda Vesical - Módulo opcional
+  if (ModuleControl.shouldSendModule("SONDA_VESICAL")) {
+    const dataSondaVesicalDeDemoraFromDatabase = await knex
+      .select("*")
+      .from(TBL_SONDAVESICALDEDEMORA)
+      .where({ CD_DTI_ATENDIMENTO });
 
-  for (const dispositivoItem of dataDispositivoTerapeuticoFromDatabase) {
-    const dispositivo = await buildDispositivoTerapeutico(dispositivoItem);
-    internacao.addDispositivoTerapeutico(dispositivo);
+    for (const itemSonda of dataSondaVesicalDeDemoraFromDatabase) {
+      const sondaVesicalDeDemora = await buildSondaVesicalDeDemora(itemSonda);
+      internacao.addSondaVesicalDeDemora(sondaVesicalDeDemora);
+    }
   }
 
-  const dataAltaAdministrativaFromDatabase = await knex
-    .select("*")
-    .from(TBL_ALTA_ADMINISTRATIVA)
-    .where({ CD_DTI_ATENDIMENTO });
+  // Cateter Vascular - Módulo opcional
+  if (ModuleControl.shouldSendModule("CATETER_VASCULAR")) {
+    const dataCateterVascularCentralFromDatabase = await knex
+      .select("*")
+      .from(TBL_CATETERVASCULARCENTRAL)
+      .where({ CD_DTI_ATENDIMENTO });
 
-  for (const altaItem of dataAltaAdministrativaFromDatabase) {
-    const alta = await buildAltaAdministrativa(altaItem);
-    internacao.addAltaAdministrativa(alta);
+    for (const itemCateter of dataCateterVascularCentralFromDatabase) {
+      const cateterVascularCentral =
+        await buildCateterVascularCentral(itemCateter);
+
+      internacao.addCateterVascularCentral(cateterVascularCentral);
+    }
   }
 
-  const dataAnaliseCriticaFromDatabase = await knex
-    .select("*")
-    .from(TBL_ANALISE_CRITICA)
-    .where({ CD_DTI_ATENDIMENTO });
+  // RN - Módulo especial
+  if (ModuleControl.shouldSendModule("RN")) {
+    const dataRNFromDatabase = await knex
+      .select("*")
+      .from(TBL_RN)
+      .where({ CD_DTI_ATENDIMENTO });
 
-  for (const analiseItem of dataAnaliseCriticaFromDatabase) {
-    const analise = await buildAnaliseCritica(analiseItem);
-    internacao.addAnaliseCritica(analise);
+    for (const rnItem of dataRNFromDatabase) {
+      const rn = await buildRN(rnItem);
+      internacao.addRn(rn);
+    }
   }
 
-  const dataCausaExternaPermanenciaFromDatabase = await knex
-    .select("*")
-    .from(TBL_CAUSA_EXTERNA_PERMANENCIA)
-    .where({ CD_DTI_ATENDIMENTO });
+  // Dispositivo Terapêutico - Módulo opcional
+  if (ModuleControl.shouldSendModule("DISPOSITIVO_TERAPEUTICO")) {
+    const dataDispositivoTerapeuticoFromDatabase = await knex
+      .select("*")
+      .from(TBL_DISPOSITIVO_TERAPEUTICO)
+      .where({ CD_DTI_ATENDIMENTO });
 
-  for (const causaItem of dataCausaExternaPermanenciaFromDatabase) {
-    const causa = await buildCausaExternaPermanencia(causaItem);
-    internacao.addCausaExternaPermanencia(causa);
+    for (const dispositivoItem of dataDispositivoTerapeuticoFromDatabase) {
+      const dispositivo = await buildDispositivoTerapeutico(dispositivoItem);
+      internacao.addDispositivoTerapeutico(dispositivo);
+    }
   }
 
-  const dataCondicaoAdquiridaSuporteVentilatorioFromDatabase = await knex
-    .select("*")
-    .from(TBL_COND_ADQ_SUP_VENT)
-    .where({ CD_DTI_ATENDIMENTO });
+  // Alta Administrativa - Módulo opcional
+  if (ModuleControl.shouldSendModule("ALTA_ADMINISTRATIVA")) {
+    const dataAltaAdministrativaFromDatabase = await knex
+      .select("*")
+      .from(TBL_ALTA_ADMINISTRATIVA)
+      .where({ CD_DTI_ATENDIMENTO });
 
-  for (const condicaoVentItem of dataCondicaoAdquiridaSuporteVentilatorioFromDatabase) {
-    const condicaoVent =
-      await buildCondicaoAdquiridaSuporteVentilatorio(condicaoVentItem);
-    internacao.addCondicaoAdquiridaSuporteVentilatorio(condicaoVent);
+    for (const altaItem of dataAltaAdministrativaFromDatabase) {
+      const alta = await buildAltaAdministrativa(altaItem);
+      internacao.addAltaAdministrativa(alta);
+    }
   }
 
-  const dataCondicaoAdquiridaSondaFromDatabase = await knex
-    .select("*")
-    .from(TBL_COND_ADQ_SONDA)
-    .where({ CD_DTI_ATENDIMENTO });
+  // Análise Crítica - Módulo opcional
+  if (ModuleControl.shouldSendModule("ANALISE_CRITICA")) {
+    const dataAnaliseCriticaFromDatabase = await knex
+      .select("*")
+      .from(TBL_ANALISE_CRITICA)
+      .where({ CD_DTI_ATENDIMENTO });
 
-  for (const condicaoSondaItem of dataCondicaoAdquiridaSondaFromDatabase) {
-    const condicaoSonda =
-      await buildCondicaoAdquiridaSondaVesical(condicaoSondaItem);
-    internacao.addCondicaoAdquiridaSondaVesicalDeDemora(condicaoSonda);
+    for (const analiseItem of dataAnaliseCriticaFromDatabase) {
+      const analise = await buildAnaliseCritica(analiseItem);
+      internacao.addAnaliseCritica(analise);
+    }
   }
 
-  const dataCondicaoAdquiridaCateterFromDatabase = await knex
-    .select("*")
-    .from(TBL_COND_ADQ_CAT_VAS)
-    .where({ CD_DTI_ATENDIMENTO });
+  // Causa Externa Permanência - Módulo opcional
+  if (ModuleControl.shouldSendModule("CAUSA_EXTERNA_PERMANENCIA")) {
+    const dataCausaExternaPermanenciaFromDatabase = await knex
+      .select("*")
+      .from(TBL_CAUSA_EXTERNA_PERMANENCIA)
+      .where({ CD_DTI_ATENDIMENTO });
 
-  for (const condicaoCateterItem of dataCondicaoAdquiridaCateterFromDatabase) {
-    const condicaoCateter =
-      await buildCondicaoAdquiridaCateterVascular(condicaoCateterItem);
-    internacao.addCondicaoAdquiridaCateterVascularCentral(condicaoCateter);
+    for (const causaItem of dataCausaExternaPermanenciaFromDatabase) {
+      const causa = await buildCausaExternaPermanencia(causaItem);
+      internacao.addCausaExternaPermanencia(causa);
+    }
+  }
+
+  // Condição Adquirida Suporte Ventilatório - Módulo opcional
+  if (ModuleControl.shouldSendModule("CONDICAO_ADQUIRIDA")) {
+    const dataCondicaoAdquiridaSuporteVentilatorioFromDatabase = await knex
+      .select("*")
+      .from(TBL_COND_ADQ_SUP_VENT)
+      .where({ CD_DTI_ATENDIMENTO });
+
+    for (const condicaoVentItem of dataCondicaoAdquiridaSuporteVentilatorioFromDatabase) {
+      const condicaoVent =
+        await buildCondicaoAdquiridaSuporteVentilatorio(condicaoVentItem);
+      internacao.addCondicaoAdquiridaSuporteVentilatorio(condicaoVent);
+    }
+  }
+
+  // Condição Adquirida Sonda - Módulo opcional
+  if (ModuleControl.shouldSendModule("CONDICAO_ADQUIRIDA")) {
+    const dataCondicaoAdquiridaSondaFromDatabase = await knex
+      .select("*")
+      .from(TBL_COND_ADQ_SONDA)
+      .where({ CD_DTI_ATENDIMENTO });
+
+    for (const condicaoSondaItem of dataCondicaoAdquiridaSondaFromDatabase) {
+      const condicaoSonda =
+        await buildCondicaoAdquiridaSondaVesical(condicaoSondaItem);
+      internacao.addCondicaoAdquiridaSondaVesicalDeDemora(condicaoSonda);
+    }
+  }
+
+  // Condição Adquirida Cateter - Módulo opcional
+  if (ModuleControl.shouldSendModule("CONDICAO_ADQUIRIDA")) {
+    const dataCondicaoAdquiridaCateterFromDatabase = await knex
+      .select("*")
+      .from(TBL_COND_ADQ_CAT_VAS)
+      .where({ CD_DTI_ATENDIMENTO });
+
+    for (const condicaoCateterItem of dataCondicaoAdquiridaCateterFromDatabase) {
+      const condicaoCateter =
+        await buildCondicaoAdquiridaCateterVascular(condicaoCateterItem);
+      internacao.addCondicaoAdquiridaCateterVascularCentral(condicaoCateter);
+    }
   }
 
   return internacao;

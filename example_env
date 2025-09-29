@@ -70,3 +70,56 @@ TBL_COND_ADQ_SUP_VENT='INOVEMED.TBL_INM_COND_ADQ_SUP_VENT'
 TBL_COND_ADQ_SONDA='INOVEMED.TBL_INM_COND_ADQ_SONDA'
 
 TBL_COND_ADQ_CAT_VAS='INOVEMED.TBL_INM_COND_ADQ_CAT_VAS'
+
+# ========================================
+# CONTROLE DE ENVIO POR CATEGORIA
+# ========================================
+
+# Categoria BÁSICA (sempre ativa)
+SEND_BASIC_MODULES=S
+
+# Categoria OPCIONAL
+SEND_OPTIONAL_MODULES=N
+
+# Categoria ESPECIAL
+SEND_SPECIAL_MODULES=N
+
+# Controle Granular por Módulo
+SEND_CTI=N
+SEND_SUPORTE_VENTILATORIO=N
+SEND_CATETER_VASCULAR=N
+SEND_SONDA_VESICAL=N
+SEND_CONDICAO_ADQUIRIDA=N
+SEND_PARTO_ADEQUADO=N
+SEND_RN=N
+SEND_ALTA_ADMINISTRATIVA=N
+SEND_ANALISE_CRITICA=N
+SEND_CAUSA_EXTERNA_PERMANENCIA=N
+SEND_MEDICO_PROCEDIMENTO=N
+SEND_DISPOSITIVO_TERAPEUTICO=N
+
+# ========================================
+# CONFIGURAÇÕES AVANÇADAS
+# ========================================
+
+# Log de módulos enviados (S/N)
+LOG_SENT_MODULES=S
+
+# Validação de módulos obrigatórios (S/N)
+VALIDATE_REQUIRED_MODULES=S
+
+# ========================================
+# MONITORAMENTO E MÉTRICAS
+# ========================================
+
+# Ativar monitoramento de módulos (S/N)
+MODULE_MONITORING=S
+
+# Intervalo de limpeza de métricas (em horas)
+METRICS_CLEANUP_INTERVAL=24
+
+# Exportar métricas automaticamente (S/N)
+AUTO_EXPORT_METRICS=S
+
+# Intervalo de exportação (em horas)
+METRICS_EXPORT_INTERVAL=1
