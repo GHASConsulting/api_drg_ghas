@@ -21,22 +21,81 @@
 - **[Configuração Rápida](./CONFIGURACAO_RAPIDA.md)** - Configuração por tipo de estabelecimento
 - **[Troubleshooting](./TROUBLESHOOTING.md)** - Resolução de problemas comuns
 
+### **🎯 Início Ultrarrápido**
+
+```bash
+# 1. Clone o repositório
+git clone <url-do-repositorio>
+cd drg
+
+# 2. Execute o script de instalação automática
+chmod +x install.sh
+./install.sh
+
+# 3. Configure suas credenciais no arquivo .env
+nano .env
+
+# 4. Execute a aplicação
+docker-compose up -d
+
+# 5. Acesse:
+# - Aplicação: http://localhost:3434
+# - Portainer: https://localhost:9443
+```
+
 ---
 
-## Documentação da API
+## 🚀 Instalação Automática
 
-### Instalação
+### **Instalação Completa com Script Automatizado**
 
-A API é um software que permite enviar internações para uma outra API, chamada API SOAP. Para instalar a API, você precisa ter o Node.js, o Oracle Instant Client e o NPM.
+Para uma instalação rápida e completa, use o script de instalação que configura automaticamente:
 
-**Requisitos:**
+- Docker
+- Docker Compose
+- Portainer
+- Aplicação DRG
+
+```bash
+# Tornar o script executável e executar
+chmod +x install.sh
+./install.sh
+```
+
+O script detecta automaticamente seu sistema operacional e instala todas as dependências necessárias.
+
+**O que o script instala:**
+
+- ✅ Docker (detecção automática do SO)
+- ✅ Docker Compose
+- ✅ Portainer (interface web para gerenciar containers)
+- ✅ Dependências da aplicação
+- ✅ Estrutura de logs
+- ✅ Configuração inicial
+
+**Acesso após instalação:**
+
+- 🌐 **Portainer**: https://localhost:9443 (gerenciamento de containers)
+- 🚀 **Aplicação**: http://localhost:3434 (após executar `docker-compose up -d`)
+
+---
+
+## 📖 Instalação Manual
+
+### Requisitos
+
+A API é um software que permite enviar internações para uma outra API, chamada API SOAP. Para instalar a API manualmente, você precisa ter:
+
+**Dependências obrigatórias:**
 
 - Node.js: https://node.js.org/en/download/
 - Oracle Instant Client: https://www.oracle.com/database/technologies/instant-client/downloads.html
   deve-se atentar a versão de instalação do INSTANT CLIENT. Por exemplo, se a instalação for a versão 21.7, no ORACLE_DIR do .env terá: /opt/oracle/instantclient_21_7
 - NPM: https://docs.npmjs.com/downloading-and-installing-node-js-and-npm/
+- Docker: https://docs.docker.com/get-docker/
+- Docker Compose: https://docs.docker.com/compose/install/
 
-**Etapas de instalação:**
+**Etapas de instalação manual:**
 
 1. **Clonar o código-fonte da API:**
 
@@ -141,7 +200,55 @@ Para enviar uma internação específica, execute o seguinte comando:
 curl -X GET http://localhost:3434/createxml/990724
 ```
 
-## Rodando em produção
+## 🐳 Rodando com Docker
+
+### **Opção 1: Docker Compose (Recomendado)**
+
+```bash
+# Executar a aplicação em containers
+docker-compose up -d
+
+# Visualizar logs
+docker-compose logs -f
+
+# Parar aplicação
+docker-compose down
+```
+
+### **Opção 2: Docker manual**
+
+```bash
+# Build da imagem
+docker build -t drg-app .
+
+# Executar container
+docker run -d -p 3434:3434 --name drg-app-container drg-app
+```
+
+### **Gerenciamento com Portainer**
+
+Após instalar com o script, acesse o Portainer para gerenciar containers via interface web:
+
+- 🌐 **URL**: https://localhost:9443
+- 📊 **Funcionalidades**:
+  - Visualizar status dos containers
+  - Monitorar logs em tempo real
+  - Gerenciar volumes e redes
+  - Atualizar containers
+  - Visualizar métricas de recursos
+
+---
+
+## ⚙️ Rodando em produção
+
+### **Produção com Docker (Recomendado)**
+
+```bash
+# Para produção, use o docker-compose
+docker-compose -f docker-compose.prod.yml up -d
+```
+
+### **Produção com PM2 (Tradicional)**
 
 Faça o deploy da aplicação, seguindo os passos 1 a 4 da instalação.
 
