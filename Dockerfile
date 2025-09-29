@@ -47,4 +47,4 @@ RUN npm run build
 EXPOSE 3434
 
 # Comando para iniciar a aplicação
-CMD ["/app/start.sh"] 
+CMD ["bash", "/app/start.sh"] 

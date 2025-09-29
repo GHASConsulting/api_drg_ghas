@@ -1,6 +1,13 @@
+import { TestDataGenerator } from "../testDataGenerator";
+import { TestRunner } from "../testRunner";
+
 export class AdmissionalTestScenarios {
-  constructor() {
-    // Inicialização dos cenários de teste admissional
+  private dataGenerator: TestDataGenerator;
+  private testRunner: TestRunner;
+
+  constructor(dataGenerator?: TestDataGenerator, testRunner?: TestRunner) {
+    this.dataGenerator = dataGenerator || new TestDataGenerator();
+    this.testRunner = testRunner || new TestRunner();
   }
 
   async runAllScenarios() {
@@ -40,31 +47,84 @@ export class AdmissionalTestScenarios {
   }
 
   async cenarioAdmissionalBasico() {
-    // Implementação do cenário admissional básico
+    console.log("🧪 Executando Cenário Admissional Básico...");
+
+    // Gera dados de teste usando os modelos
+    const testData = await this.dataGenerator.generateAdmissionalData(1);
+    const data = testData[0];
+
+    // Validações básicas
+    const validations = {
+      hospital: this.validateHospital(data.hospital),
+      paciente: this.validatePaciente(data.paciente),
+      internacao: this.validateInternacao(data.internacao),
+    };
+
+    const isValid = Object.values(validations).every((v) => v.isValid);
+
     return {
       situacao: "ADMISSIONAL",
       tipo: "BASICO",
-      status: "success",
+      status: isValid ? "success" : "error",
       dados: {
-        paciente: "Paciente teste básico",
-        hospital: "Hospital teste",
-        dataAdmissao: new Date(),
+        hospital: data.hospital.getData(),
+        paciente: data.paciente.getData(),
+        internacao: data.internacao.getData(),
+        validations: validations,
       },
+      errors: isValid ? [] : this.collectErrors(validations),
     };
   }
 
   async cenarioAdmissionalComProcedimentos() {
-    // Implementação do cenário admissional com procedimentos
+    console.log("🧪 Executando Cenário Admissional com Procedimentos...");
+
+    // Gera dados de teste
+    const testData = await this.dataGenerator.generateAdmissionalData(1);
+    const data = testData[0];
+
+    // Adiciona procedimentos à internação
+    const procedimento1 = new (
+      await import("../../models/procedimento")
+    ).Procedimento();
+    procedimento1.setCodigoProcedimento("PROC001");
+    procedimento1.setDataExecucao(new Date().toISOString());
+    procedimento1.setDataAutorizacao(new Date().toISOString());
+
+    const procedimento2 = new (
+      await import("../../models/procedimento")
+    ).Procedimento();
+    procedimento2.setCodigoProcedimento("PROC002");
+    procedimento2.setDataExecucao(new Date().toISOString());
+    procedimento2.setDataAutorizacao(new Date().toISOString());
+
+    data.internacao.addProcedimento(procedimento1);
+    data.internacao.addProcedimento(procedimento2);
+
+    // Validações
+    const validations = {
+      hospital: this.validateHospital(data.hospital),
+      paciente: this.validatePaciente(data.paciente),
+      internacao: this.validateInternacao(data.internacao),
+      procedimentos: this.validateProcedimentos(
+        data.internacao.getData().Procedimento
+      ),
+    };
+
+    const isValid = Object.values(validations).every((v) => v.isValid);
+
     return {
       situacao: "ADMISSIONAL",
       tipo: "COM_PROCEDIMENTOS",
-      status: "success",
+      status: isValid ? "success" : "error",
       dados: {
-        paciente: "Paciente com procedimentos",
-        hospital: "Hospital teste",
-        procedimentos: ["PROC001", "PROC002"],
-        dataAdmissao: new Date(),
+        hospital: data.hospital.getData(),
+        paciente: data.paciente.getData(),
+        internacao: data.internacao.getData(),
+        procedimentos: data.internacao.getData().Procedimento,
+        validations: validations,
       },
+      errors: isValid ? [] : this.collectErrors(validations),
     };
   }
 
@@ -123,5 +183,96 @@ export class AdmissionalTestScenarios {
         },
       ],
     };
+  }
+
+  // Métodos de validação
+  private validateHospital(hospital: any) {
+    const data = hospital.getData();
+    const errors = [];
+
+    if (!data.codigo) errors.push("Código do hospital é obrigatório");
+    if (!data.nome) errors.push("Nome do hospital é obrigatório");
+    if (!data.cnes) errors.push("CNES do hospital é obrigatório");
+    if (!data.porte) errors.push("Porte do hospital é obrigatório");
+    if (!data.complexidade)
+      errors.push("Complexidade do hospital é obrigatória");
+    if (!data.esferaAdministrativa)
+      errors.push("Esfera administrativa é obrigatória");
+
+    return {
+      isValid: errors.length === 0,
+      errors: errors,
+      data: data,
+    };
+  }
+
+  private validatePaciente(paciente: any) {
+    const data = paciente.getData();
+    const errors = [];
+
+    if (!data.dataNascimento) errors.push("Data de nascimento é obrigatória");
+    if (!data.sexo) errors.push("Sexo é obrigatório");
+
+    return {
+      isValid: errors.length === 0,
+      errors: errors,
+      data: data,
+    };
+  }
+
+  private validateInternacao(internacao: any) {
+    const data = internacao.getData();
+    const errors = [];
+
+    if (!data.situacao) errors.push("Situação é obrigatória");
+    if (!data.caraterInternacao)
+      errors.push("Caráter da internação é obrigatório");
+    if (!data.procedencia) errors.push("Procedência é obrigatória");
+    if (!data.leito) errors.push("Leito é obrigatório");
+    if (!data.dataInternacao) errors.push("Data de internação é obrigatória");
+    if (!data.codigoCidPrincipal) errors.push("CID principal é obrigatório");
+
+    return {
+      isValid: errors.length === 0,
+      errors: errors,
+      data: data,
+    };
+  }
+
+  private validateProcedimentos(procedimentos: any[]) {
+    const errors = [];
+
+    if (!procedimentos || procedimentos.length === 0) {
+      errors.push("Pelo menos um procedimento é obrigatório");
+    } else {
+      procedimentos.forEach((proc, index) => {
+        if (!proc.codigoProcedimento)
+          errors.push(`Procedimento ${index + 1}: Código é obrigatório`);
+        if (!proc.dataExecucao)
+          errors.push(
+            `Procedimento ${index + 1}: Data de execução é obrigatória`
+          );
+        if (!proc.dataAutorizacao)
+          errors.push(
+            `Procedimento ${index + 1}: Data de autorização é obrigatória`
+          );
+      });
+    }
+
+    return {
+      isValid: errors.length === 0,
+      errors: errors,
+      data: procedimentos,
+    };
+  }
+
+  private collectErrors(validations: any) {
+    const allErrors = [];
+    Object.values(validations).forEach((validation: any) => {
+      if (validation.errors) {
+        allErrors.push(...validation.errors);
+      }
+    });
+    return allErrors;
   }
 }

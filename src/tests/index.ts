@@ -6,6 +6,8 @@ import { ProrrogacaoTestScenarios } from "./scenarios/prorrogacao.test";
 import { SuplementarTestScenarios } from "./scenarios/suplementar.test";
 import { ModuleControlTestSuite } from "./moduleControl.test";
 import { PartoAdequadoTestScenarios } from "./scenarios/partoAdequado.test";
+import { ModelValidationTests } from "./modelValidation.test";
+import { DataStructureValidationTests } from "./dataStructureValidation.test";
 
 export class DRGTestSuite {
   private dataGenerator: TestDataGenerator;
@@ -16,28 +18,23 @@ export class DRGTestSuite {
   private suplementarScenarios: SuplementarTestScenarios;
   private moduleControlTests: ModuleControlTestSuite;
   private partoAdequadoScenarios: PartoAdequadoTestScenarios;
+  private modelValidationTests: ModelValidationTests;
+  private dataStructureValidationTests: DataStructureValidationTests;
 
   constructor() {
     this.dataGenerator = new TestDataGenerator();
     this.testRunner = new TestRunner();
     this.reporter = new TestReporter();
-    this.admissionalScenarios = new AdmissionalTestScenarios(
-      this.dataGenerator,
-      this.testRunner
-    );
-    this.prorrogacaoScenarios = new ProrrogacaoTestScenarios(
-      this.dataGenerator,
-      this.testRunner
-    );
-    this.suplementarScenarios = new SuplementarTestScenarios(
-      this.dataGenerator,
-      this.testRunner
-    );
+    this.admissionalScenarios = new AdmissionalTestScenarios();
+    this.prorrogacaoScenarios = new ProrrogacaoTestScenarios();
+    this.suplementarScenarios = new SuplementarTestScenarios();
     this.moduleControlTests = new ModuleControlTestSuite();
     this.partoAdequadoScenarios = new PartoAdequadoTestScenarios(
       this.dataGenerator,
       this.testRunner
     );
+    this.modelValidationTests = new ModelValidationTests();
+    this.dataStructureValidationTests = new DataStructureValidationTests();
   }
 
   async initialize(): Promise<void> {
@@ -69,6 +66,18 @@ export class DRGTestSuite {
     const partoAdequadoResults =
       await this.partoAdequadoScenarios.runAllScenarios();
     this.reporter.addResults(partoAdequadoResults.results);
+
+    // Executa testes de validação dos modelos
+    console.log("🔍 Executando testes de validação dos modelos...");
+    const modelValidationResults =
+      await this.modelValidationTests.runAllValidationTests();
+    this.reporter.addResults(modelValidationResults.results);
+
+    // Executa testes de validação de estrutura de dados
+    console.log("🔍 Executando testes de validação de estrutura de dados...");
+    const dataStructureResults =
+      await this.dataStructureValidationTests.runAllStructureValidationTests();
+    this.reporter.addResults(dataStructureResults.results);
 
     // Coleta todos os resultados
     const allResults = this.testRunner.getResults();
@@ -104,7 +113,7 @@ export class DRGTestSuite {
         throw new Error(`Situação inválida: ${situacao}`);
     }
 
-    const results = this.testRunner.getResultsBySituacao(situacao);
+    const results = this.testRunner.getResultsBySituacao(situacao.toString());
     this.reporter.addResults(results);
 
     console.log(`✅ Testes para situação ${situacao} executados!`);
@@ -135,6 +144,35 @@ export class DRGTestSuite {
 
     console.log(
       `✅ Cenários de parto adequado executados! (${results.passed} passaram, ${results.failed} falharam)`
+    );
+  }
+
+  /**
+   * Executa testes de validação dos modelos DRG
+   */
+  async runModelValidationTests(): Promise<void> {
+    console.log("🔍 Executando testes de validação dos modelos...");
+
+    const results = await this.modelValidationTests.runAllValidationTests();
+    this.reporter.addResults(results.results);
+
+    console.log(
+      `✅ Testes de validação dos modelos executados! (${results.passed} passaram, ${results.failed} falharam)`
+    );
+  }
+
+  /**
+   * Executa testes de validação de estrutura de dados
+   */
+  async runDataStructureValidationTests(): Promise<void> {
+    console.log("🔍 Executando testes de validação de estrutura de dados...");
+
+    const results =
+      await this.dataStructureValidationTests.runAllStructureValidationTests();
+    this.reporter.addResults(results.results);
+
+    console.log(
+      `✅ Testes de validação de estrutura executados! (${results.passed} passaram, ${results.failed} falharam)`
     );
   }
 
@@ -175,19 +213,19 @@ export class DRGTestSuite {
 
     switch (situacao) {
       case 1:
-        await this.admissionalScenarios.runScenario(scenarioNumber);
+        await this.admissionalScenarios.runScenario(scenarioNumber.toString());
         break;
       case 2:
-        await this.prorrogacaoScenarios.runScenario(scenarioNumber);
+        await this.prorrogacaoScenarios.runScenario(scenarioNumber.toString());
         break;
       case 3:
-        await this.suplementarScenarios.runScenario(scenarioNumber);
+        await this.suplementarScenarios.runScenario(scenarioNumber.toString());
         break;
       default:
         throw new Error(`Situação inválida: ${situacao}`);
     }
 
-    const results = this.testRunner.getResultsBySituacao(situacao);
+    const results = this.testRunner.getResultsBySituacao(situacao.toString());
     this.reporter.addResults(results);
 
     console.log(
@@ -344,20 +382,23 @@ export class DRGTestSuite {
   async runValidationOnly(): Promise<void> {
     console.log("🔍 Executando apenas validações...");
 
-    const scenarios = this.dataGenerator.generateTestScenarios();
+    const scenarios = await this.dataGenerator.generateTestScenarios();
 
-    for (const scenario of scenarios) {
-      const validation = await this.testRunner.runValidationOnly(scenario);
-      console.log(
-        `  📋 ${scenario.nome}: ${validation.isValid ? "✅ Válido" : "❌ Inválido"} (Score: ${validation.score})`
-      );
+    for (const situacao in scenarios) {
+      const situacaoScenarios = scenarios[situacao];
+      for (const scenario of situacaoScenarios) {
+        const validation = await this.testRunner.runValidationOnly();
+        console.log(
+          `  📋 ${situacao}: ${validation.status === "success" ? "✅ Válido" : "❌ Inválido"}`
+        );
 
-      if (!validation.isValid) {
-        console.log(`    ❌ Erros: ${validation.errors.join(", ")}`);
-      }
+        if (validation.status !== "success") {
+          console.log(`    ❌ Status: ${validation.status}`);
+        }
 
-      if (validation.warnings.length > 0) {
-        console.log(`    ⚠️ Avisos: ${validation.warnings.join(", ")}`);
+        if (validation.tests && validation.tests.length > 0) {
+          console.log(`    📊 Testes executados: ${validation.tests.length}`);
+        }
       }
     }
 
@@ -406,19 +447,31 @@ export class DRGTestSuite {
   listAllScenarios(): void {
     console.log("📋 Cenários disponíveis:");
     console.log("\n🏥 Admissional (Situação 1):");
-    this.admissionalScenarios
-      .getScenariosDescription()
-      .forEach((desc) => console.log(`  ${desc}`));
+    const admissionalDescs =
+      this.admissionalScenarios.getScenariosDescription();
+    if (Array.isArray(admissionalDescs)) {
+      admissionalDescs.forEach((desc) => console.log(`  ${desc}`));
+    } else {
+      console.log("  Cenários admissional disponíveis");
+    }
 
     console.log("\n⏰ Prorrogação (Situação 2):");
-    this.prorrogacaoScenarios
-      .getScenariosDescription()
-      .forEach((desc) => console.log(`  ${desc}`));
+    const prorrogacaoDescs =
+      this.prorrogacaoScenarios.getScenariosDescription();
+    if (Array.isArray(prorrogacaoDescs)) {
+      prorrogacaoDescs.forEach((desc) => console.log(`  ${desc}`));
+    } else {
+      console.log("  Cenários prorrogação disponíveis");
+    }
 
     console.log("\n📋 Suplementar (Situação 3):");
-    this.suplementarScenarios
-      .getScenariosDescription()
-      .forEach((desc) => console.log(`  ${desc}`));
+    const suplementarDescs =
+      this.suplementarScenarios.getScenariosDescription();
+    if (Array.isArray(suplementarDescs)) {
+      suplementarDescs.forEach((desc) => console.log(`  ${desc}`));
+    } else {
+      console.log("  Cenários suplementar disponíveis");
+    }
   }
 }
 
@@ -482,4 +535,18 @@ export async function runDRGSpecificScenarioEstabelecimento8(
   const testSuite = new DRGTestSuite();
   await testSuite.initialize();
   await testSuite.runSpecificScenarioEstabelecimento8(situacao, scenarioNumber);
+}
+
+export async function runDRGModelValidationTests(): Promise<void> {
+  const testSuite = new DRGTestSuite();
+  await testSuite.initialize();
+  await testSuite.runModelValidationTests();
+  await testSuite.generateAndDisplayReport();
+}
+
+export async function runDRGDataStructureValidationTests(): Promise<void> {
+  const testSuite = new DRGTestSuite();
+  await testSuite.initialize();
+  await testSuite.runDataStructureValidationTests();
+  await testSuite.generateAndDisplayReport();
 }
