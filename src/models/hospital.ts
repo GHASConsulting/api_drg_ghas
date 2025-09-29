@@ -16,6 +16,7 @@ export class Hospital {
 
   // Campo opcional
   private complementoLogradouro: string; // Complemento do logradouro (máx 100 caracteres)
+  private codigoMunicipio: string; // Código do município do hospital
 
   constructor() {
     this.codigo = "";
@@ -32,6 +33,7 @@ export class Hospital {
     this.complementoLogradouro = "";
     this.bairro = "";
     this.cep = "";
+    this.codigoMunicipio = "";
   }
 
   public setCodigo(codigo) {
@@ -90,6 +92,10 @@ export class Hospital {
     this.cep = cep;
   }
 
+  public setCodigoMunicipio(codigoMunicipio) {
+    this.codigoMunicipio = codigoMunicipio;
+  }
+
   public getData(): object {
     return {
       codigo: this.codigo,
@@ -106,6 +112,7 @@ export class Hospital {
       complementoLogradouro: this.complementoLogradouro,
       bairro: this.bairro,
       cep: this.cep,
+      codigoMunicipio: this.codigoMunicipio,
     };
   }
 }

@@ -20,5 +20,8 @@ export async function buildPaciente(item: any): Promise<Paciente> {
   paciente.setCep(item.CEP_PAC);
   paciente.setVulnerabilidadeSocial(item.VULNERABILIDADE_SOCIAL_PAC);
   paciente.setCns(item.CNS_PAC);
+  paciente.setCodigoIdentificacao(item.CODIGO_IDENTIFICACAO);
+  paciente.setCodigoMunicipio(item.CODIGO_MUNICIPIO_PAC);
+  paciente.setParticular(item.PARTICULAR_PAC);
   return paciente;
 }

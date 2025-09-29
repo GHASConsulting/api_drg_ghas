@@ -108,6 +108,10 @@ export class Paciente {
     this.codigoIdentificacao = codigoItentificacao;
   }
 
+  public setCodigoMunicipio(codigoMunicipio) {
+    this.cidade = codigoMunicipio;
+  }
+
   public getData(): object {
     return {
       dataNascimento: this.dataNascimento,

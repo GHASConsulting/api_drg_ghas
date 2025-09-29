@@ -6,6 +6,7 @@ import { CidSecundario } from "./cidSecundario";
 import { CondicaoAdquirida } from "./condicaoAdquirida";
 import { CondicaoAdquiridaCateterVascularCentral } from "./condicaoAdquiridaCateterVascularCentral";
 import { CondicaoAdquiridaSondaVesicalDeDemora } from "./condicaoAdquiridaSondaVesicalDeDemora";
+import { CondicaoAdquiridaSuporteVentilatorio } from "./condicaoAdquiridaSuporteVentilatorio";
 import { Cti } from "./cti";
 import { DispositivoTerapeutico } from "./dispositivoTerapeutico";
 import { Hospital } from "./hospital";
@@ -87,6 +88,8 @@ export class Internacao {
   private condicoesAdquiridasSondaVesicalDeDemora: CondicaoAdquiridaSondaVesicalDeDemora[];
   private condicaoAdquiridaCateterVascularCentral: CondicaoAdquiridaCateterVascularCentral;
   private condicoesAdquiridasCateterVascularCentral: CondicaoAdquiridaCateterVascularCentral[];
+  private condicaoAdquiridaSuporteVentilatorio: CondicaoAdquiridaSuporteVentilatorio;
+  private condicoesAdquiridasSuporteVentilatorio: CondicaoAdquiridaSuporteVentilatorio[];
   constructor() {
     // Inicialização dos campos básicos
     this.situacao = "";
@@ -157,6 +160,9 @@ export class Internacao {
     this.condicaoAdquiridaCateterVascularCentral =
       new CondicaoAdquiridaCateterVascularCentral();
     this.condicoesAdquiridasCateterVascularCentral = [];
+    this.condicaoAdquiridaSuporteVentilatorio =
+      new CondicaoAdquiridaSuporteVentilatorio();
+    this.condicoesAdquiridasSuporteVentilatorio = [];
   }
 
   public addHospital(hospital: Hospital): void {
@@ -250,6 +256,14 @@ export class Internacao {
   ): void {
     this.condicoesAdquiridasCateterVascularCentral.push(
       condicaoAdquiridaCateterVascularCentral
+    );
+  }
+
+  public addCondicaoAdquiridaSuporteVentilatorio(
+    condicaoAdquiridaSuporteVentilatorio: CondicaoAdquiridaSuporteVentilatorio
+  ): void {
+    this.condicoesAdquiridasSuporteVentilatorio.push(
+      condicaoAdquiridaSuporteVentilatorio
     );
   }
 
@@ -425,6 +439,11 @@ export class Internacao {
         this.condicoesAdquiridasCateterVascularCentral.map(
           (condicaoAdquiridaCateterVascularCentral) =>
             condicaoAdquiridaCateterVascularCentral.getData()
+        ),
+      CondicaoAdquiridaSuporteVentilatorio:
+        this.condicoesAdquiridasSuporteVentilatorio.map(
+          (condicaoAdquiridaSuporteVentilatorio) =>
+            condicaoAdquiridaSuporteVentilatorio.getData()
         ),
     };
   }

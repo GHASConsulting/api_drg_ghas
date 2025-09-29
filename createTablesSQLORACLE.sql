@@ -1,3 +1,9 @@
+-- Script para criar tabela DRG no Oracle
+-- Estrutura ATUALIZADA com todas as colunas corrigidas
+-- Baseado na estrutura normalizada do SQLite e modelos TypeScript
+-- Inclui novos campos: cd_cirurgia_aviso_proc, ds_nota, tp_nota, dt_nota, ie_nenhum_dispositivo
+-- Campos técnicos: ds_erro, cd_dti_atendimento
+
 PROMPT CREATE TABLE ghas_tasy_drg_t
 CREATE TABLE ghas_tasy_drg_t (
   ie_situacao_int             VARCHAR2(1)    NULL,
@@ -18,6 +24,10 @@ CREATE TABLE ghas_tasy_drg_t (
   ie_int_recente              VARCHAR2(1)    NULL,
   ie_motivo_int_ant           VARCHAR2(1)    NULL,
   ie_acao_int                 VARCHAR2(15)   NULL,
+  ds_nota                     VARCHAR2(4000) NULL, -- Nota do prontuário
+  tp_nota                     VARCHAR2(1)    NULL, -- Tipo da nota (A-Admissão, L-Alta)
+  dt_nota                     VARCHAR2(20)   NULL, -- Data da nota
+  ie_nenhum_dispositivo       VARCHAR2(1)    NULL, -- S-Sim, N-Não (nenhum dispositivo terapêutico)
   cd_estabelecimento_hosp     NUMBER         NULL,
   nm_fantasia_estab_hosp      VARCHAR2(120)  NULL,
   cd_cnes_hosp                NUMBER         NULL,
@@ -67,6 +77,7 @@ CREATE TABLE ghas_tasy_drg_t (
   dt_ped_med_proc             VARCHAR2(20)   NULL,
   dt_inicio_real_proc         VARCHAR2(20)   NULL,
   dt_fim_cirurgia_proc        VARCHAR2(20)   NULL,
+  cd_cirurgia_aviso_proc      VARCHAR2(25)   NULL, -- Código da cirurgia aviso (opcional)
   sg_med_proc                 VARCHAR2(2)    NULL,
   ds_cod_prof_med_proc        VARCHAR2(20)   NULL,
   ie_funcao_med_proc          VARCHAR2(2)    NULL,
@@ -159,7 +170,9 @@ CREATE TABLE ghas_tasy_drg_t (
   motivo_cesaria_par_ade      VARCHAR2(3)    NULL,
   qt_gestacoesqt_gestacoes    NUMBER         NULL,
   id_integracao               NUMBER         NULL,
-  tp_status                   VARCHAR2(100)  NULL
+  tp_status                   VARCHAR2(100)  NULL,
+  ds_erro                     VARCHAR2(1000) NULL, -- Descrição de erro (técnico)
+  cd_dti_atendimento          VARCHAR2(50)   NULL  -- Código DTI para referência
 )
   STORAGE (
     NEXT       1024 K

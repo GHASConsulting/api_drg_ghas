@@ -1,3 +1,9 @@
+-- Script PostgreSQL para criar estrutura DRG completa
+-- Estrutura ATUALIZADA com todas as colunas e tabelas corrigidas
+-- Baseado na estrutura normalizada do SQLite e modelos TypeScript
+-- Inclui: campos de Parto Adequado completos, cd_cirurgia_aviso, tabelas de condições adquiridas
+-- Campos técnicos: cd_dti_atendimento, campos de identificação faltantes
+
 CREATE TABLE "tbl_dti_atendimento" (
 	"situacao_internacao" integer,
 	"carater_internacao" integer,
@@ -66,6 +72,44 @@ CREATE TABLE "tbl_dti_atendimento" (
 	"cesariana_parto_adequado" varchar,
 	"medicacao_inducao_parto" varchar,
 	"nr_partos_anteriores" varchar,
+	-- Campos completos de Parto Adequado conforme DRG
+	"antecedentes_obstetricos" varchar,
+	"numero_cesareas_anteriores" varchar,
+	"apresentacao_fetal_rn1" varchar,
+	"apresentacao_fetal_rn2" varchar,
+	"apresentacao_fetal_rn3" varchar,
+	"apresentacao_fetal_rn4" varchar,
+	"apresentacao_fetal_rn5" varchar,
+	"inicio_trabalho_parto" varchar,
+	"ruptura_uterina" varchar,
+	"laceracao_perineal" varchar,
+	"transfusao_sanguinea" varchar,
+	"morte_materna" varchar,
+	"morte_fetal_intraparto" varchar,
+	"admissao_materna_uti" varchar,
+	"retorno_sala_parto" varchar,
+	"indice_satisfacao_hospital" varchar,
+	"indice_satisfacao_equipe" varchar,
+	"houve_contato_pele" varchar,
+	"posicao_parto" varchar,
+	"uso_ocitocina_misoprostol" varchar,
+	"parturiente_acompanhada" varchar,
+	"presenca_doula" varchar,
+	"realizada_episiotomia" varchar,
+	"houve_aleitamento_materno" varchar,
+	"quando_ocorreu_clampamento" varchar,
+	"houve_metodos_analgesia" varchar,
+	"metodo_analgesia" varchar,
+	"perimetro_cefalico_rn1" varchar,
+	"perimetro_cefalico_rn2" varchar,
+	"perimetro_cefalico_rn3" varchar,
+	"perimetro_cefalico_rn4" varchar,
+	"perimetro_cefalico_rn5" varchar,
+	-- Campos de identificação que estavam faltando
+	"codigo_municipio_hospital" varchar,       -- Código do município (12 chars numérico)
+	"codigo_identificacao" varchar,            -- Código ID do beneficiário (15 chars)
+	"codigo_municipio_pac" varchar,            -- Código do município do paciente (12 chars numérico)
+	"cd_dti_atendimento" varchar,              -- Código DTI para referência
 	"tp_status" varchar,
 	"ds_erro" varchar,
 	"id_atendimento" serial NOT NULL,
@@ -104,10 +148,14 @@ CREATE TABLE "tbl_dti_cid" (
 
 CREATE TABLE "tbl_dti_procedimento" (
 	"cd_procedimento" varchar,
-	"dt_exec" TIMESTAMP ,
+	"dt_exec" TIMESTAMP,
+	"dt_solic" TIMESTAMP,                      -- Data da solicitação
+	"dt_fim_exec" TIMESTAMP,                   -- Data final da execução
+	"cd_cirurgia_aviso" varchar,               -- Código da cirurgia aviso (opcional)
 	"crm_medico_procedimento" varchar,
 	"uf_medico_procedimento" varchar,
 	"tp_atuacao_medico_procedimento" varchar,
+	"cd_dti_atendimento" varchar,              -- Código DTI para referência
 	"id_atendimento" integer  
 ) WITH (
   OIDS=FALSE
@@ -268,8 +316,19 @@ CREATE TABLE "tbl_dti_drg_complicacoes" (
 
 -- Tabela para RN (Recém Nascido)
 CREATE TABLE "tbl_dti_rn" (
-	"nr_registro_rn" varchar,
-	"nr_atendimento_rn" varchar,
+	"peso_nascimento" integer,                  -- Peso em gramas
+	"idade_gestacional" varchar,               -- Em semanas (99.9)
+	"comprimento" varchar,                     -- Em cm (99.9)
+	"sexo_rn" varchar,                         -- M/F/I
+	"nascido_vivo" varchar,                    -- S/N
+	"tocotraumatismo" varchar,                 -- S/N/I
+	"apgar" varchar,                           -- S/N/I
+	"apgar_quinto_minuto" integer,             -- 0-10
+	"alta_48_horas" varchar,                   -- S/N
+	"nr_autorizacao_mae" varchar,              -- 25 chars
+	"nr_atendimento_mae" varchar,              -- 25 chars
+	"nr_carteira_mae" varchar,                 -- 30 chars
+	"cd_dti_atendimento" varchar,              -- Código DTI para referência
 	"id_atendimento" integer
 ) WITH (
   OIDS=FALSE
@@ -294,8 +353,150 @@ CREATE TABLE "tbl_dti_urgencia_emergencia" (
   OIDS=FALSE
 );
 
+-- Tabela para Dispositivo Terapêutico
+CREATE TABLE "tbl_dti_dispositivo_terapeutico" (
+	"local_dispositivo" varchar,               -- C/F/S
+	"tipo_dispositivo" varchar,                -- BIA2, IVA1, MCC2, etc.
+	"dt_inicial_dispositivo" TIMESTAMP,
+	"dt_final_dispositivo" TIMESTAMP,
+	"cd_dti_atendimento" varchar,
+	"id_atendimento" integer
+) WITH (
+  OIDS=FALSE
+);
 
+-- Tabela para Alta Administrativa
+CREATE TABLE "tbl_dti_alta_administrativa" (
+	"nr_atendimento_alta" varchar,             -- 25 chars
+	"nr_autorizacao_alta" varchar,             -- 25 chars
+	"dt_autorizacao_alta" TIMESTAMP,
+	"dt_inicial_atendimento" TIMESTAMP,
+	"dt_final_atendimento" TIMESTAMP,
+	"cd_dti_atendimento" varchar,
+	"id_atendimento" integer
+) WITH (
+  OIDS=FALSE
+);
 
+-- Tabela para Análise Crítica
+CREATE TABLE "tbl_dti_analise_critica" (
+	"dt_analise" TIMESTAMP,
+	"analise_critica" text,                    -- 1200 chars
+	"cd_dti_atendimento" varchar,
+	"id_atendimento" integer
+) WITH (
+  OIDS=FALSE
+);
+
+-- Tabela para Causa Externa Permanência (atualizada)
+CREATE TABLE "tbl_dti_causa_externa_permanencia" (
+	"descricao_causa" varchar,                 -- 250 chars
+	"tempo_causa" varchar,                     -- 8 chars
+	"dt_inicial_causa" TIMESTAMP,
+	"dt_final_causa" TIMESTAMP,
+	"origem_causa" varchar,                    -- A/H/R
+	"cd_dti_atendimento" varchar,
+	"id_atendimento" integer
+) WITH (
+  OIDS=FALSE
+);
+
+-- Tabela para Suporte Ventilatório
+CREATE TABLE "tbl_dti_suporte_ventilatorio" (
+	"tp_sup_vent" varchar,
+	"local_sup_vent" varchar,
+	"tp_invasivo_sup_vent" varchar,
+	"dt_inicial_sup_vent" TIMESTAMP,
+	"dt_final_sup_vent" varchar,
+	"dt_inicial_sup_ventilatorio" TIMESTAMP,
+	"dt_final_sup_ventilatorio" TIMESTAMP,
+	"cd_cid_cond_adq_vent" varchar,
+	"dt_cond_adq_vent" varchar,
+	"cd_dti_atendimento" varchar,
+	"id_atendimento" integer
+) WITH (
+  OIDS=FALSE
+);
+
+-- Tabela para Cateter Vascular Central
+CREATE TABLE "tbl_dti_cateter_vascular_central" (
+	"local_cat_vas" varchar,
+	"dt_inicio_cat_vas" varchar,
+	"dt_fim_cat_vas" varchar,
+	"cd_cid_cat_vas" varchar,
+	"dt_cat_vas" varchar,
+	"cd_dti_atendimento" varchar,
+	"id_atendimento" integer
+) WITH (
+  OIDS=FALSE
+);
+
+-- Tabela para Sonda Vesical de Demora
+CREATE TABLE "tbl_dti_sonda_vesical_demora" (
+	"local_son_ves" varchar,
+	"dt_inicio_son_ves" varchar,
+	"dt_fim_son_ves" varchar,
+	"cd_cid_cond_adq_sonda" varchar,
+	"dt_cond_adq_sonda" varchar,
+	"cd_dti_atendimento" varchar,
+	"id_atendimento" integer
+) WITH (
+  OIDS=FALSE
+);
+
+-- Tabela para Condição Adquirida
+CREATE TABLE "tbl_dti_condicao_adquirida" (
+	"cd_cid_cond_adq" varchar,
+	"dt_ocorrencia_cond_adq" varchar,
+	"dt_manifestacao_cond_adq" varchar,
+	"uf_med_cond_adq" varchar,
+	"crm_med_cond_adq" varchar,
+	"cd_dti_atendimento" varchar,
+	"id_atendimento" integer
+) WITH (
+  OIDS=FALSE
+);
+
+-- Tabela para Médico Procedimento
+CREATE TABLE "tbl_dti_medico_procedimento" (
+	"uf_medico_proc" varchar,                  -- 2 chars
+	"crm_medico_proc" varchar,                 -- 20 chars
+	"tp_atuacao_medico_proc" varchar,          -- A/A2/A3/R
+	"cd_dti_atendimento" varchar,
+	"id_atendimento" integer
+) WITH (
+  OIDS=FALSE
+);
+
+-- Tabela para Condição Adquirida Suporte Ventilatório
+CREATE TABLE "tbl_dti_cond_adq_sup_vent" (
+	"cd_cid_cond_adq_vent" varchar,
+	"dt_ocorrencia_cond_adq_vent" varchar,
+	"cd_dti_atendimento" varchar,
+	"id_atendimento" integer
+) WITH (
+  OIDS=FALSE
+);
+
+-- Tabela para Condição Adquirida Sonda Vesical
+CREATE TABLE "tbl_dti_cond_adq_sonda" (
+	"cd_cid_cond_adq_sonda" varchar,
+	"dt_ocorrencia_cond_adq_sonda" varchar,
+	"cd_dti_atendimento" varchar,
+	"id_atendimento" integer
+) WITH (
+  OIDS=FALSE
+);
+
+-- Tabela para Condição Adquirida Cateter Vascular
+CREATE TABLE "tbl_dti_cond_adq_cat_vas" (
+	"cd_cid_cond_adq_cat_vas" varchar,
+	"dt_ocorrencia_cond_adq_cat_vas" varchar,
+	"cd_dti_atendimento" varchar,
+	"id_atendimento" integer
+) WITH (
+  OIDS=FALSE
+);
 
 -- Constraints de Chave Estrangeira
 ALTER TABLE "tbl_dti_medico" ADD CONSTRAINT "tbl_dti_medico_fk0" FOREIGN KEY ("id_atendimento") REFERENCES "tbl_dti_atendimento"("id_atendimento");
@@ -337,8 +538,27 @@ ALTER TABLE "tbl_dti_parto_adequado" ADD CONSTRAINT "tbl_dti_parto_adequado_fk0"
 
 ALTER TABLE "tbl_dti_urgencia_emergencia" ADD CONSTRAINT "tbl_dti_urgencia_emergencia_fk0" FOREIGN KEY ("id_atendimento") REFERENCES "tbl_dti_atendimento"("id_atendimento");
 
+-- Constraints para as novas tabelas adicionadas
+ALTER TABLE "tbl_dti_dispositivo_terapeutico" ADD CONSTRAINT "tbl_dti_dispositivo_terapeutico_fk0" FOREIGN KEY ("id_atendimento") REFERENCES "tbl_dti_atendimento"("id_atendimento");
 
+ALTER TABLE "tbl_dti_alta_administrativa" ADD CONSTRAINT "tbl_dti_alta_administrativa_fk0" FOREIGN KEY ("id_atendimento") REFERENCES "tbl_dti_atendimento"("id_atendimento");
 
+ALTER TABLE "tbl_dti_analise_critica" ADD CONSTRAINT "tbl_dti_analise_critica_fk0" FOREIGN KEY ("id_atendimento") REFERENCES "tbl_dti_atendimento"("id_atendimento");
 
+ALTER TABLE "tbl_dti_causa_externa_permanencia" ADD CONSTRAINT "tbl_dti_causa_externa_permanencia_fk0" FOREIGN KEY ("id_atendimento") REFERENCES "tbl_dti_atendimento"("id_atendimento");
 
+ALTER TABLE "tbl_dti_suporte_ventilatorio" ADD CONSTRAINT "tbl_dti_suporte_ventilatorio_fk0" FOREIGN KEY ("id_atendimento") REFERENCES "tbl_dti_atendimento"("id_atendimento");
 
+ALTER TABLE "tbl_dti_cateter_vascular_central" ADD CONSTRAINT "tbl_dti_cateter_vascular_central_fk0" FOREIGN KEY ("id_atendimento") REFERENCES "tbl_dti_atendimento"("id_atendimento");
+
+ALTER TABLE "tbl_dti_sonda_vesical_demora" ADD CONSTRAINT "tbl_dti_sonda_vesical_demora_fk0" FOREIGN KEY ("id_atendimento") REFERENCES "tbl_dti_atendimento"("id_atendimento");
+
+ALTER TABLE "tbl_dti_condicao_adquirida" ADD CONSTRAINT "tbl_dti_condicao_adquirida_fk0" FOREIGN KEY ("id_atendimento") REFERENCES "tbl_dti_atendimento"("id_atendimento");
+
+ALTER TABLE "tbl_dti_medico_procedimento" ADD CONSTRAINT "tbl_dti_medico_procedimento_fk0" FOREIGN KEY ("id_atendimento") REFERENCES "tbl_dti_atendimento"("id_atendimento");
+
+ALTER TABLE "tbl_dti_cond_adq_sup_vent" ADD CONSTRAINT "tbl_dti_cond_adq_sup_vent_fk0" FOREIGN KEY ("id_atendimento") REFERENCES "tbl_dti_atendimento"("id_atendimento");
+
+ALTER TABLE "tbl_dti_cond_adq_sonda" ADD CONSTRAINT "tbl_dti_cond_adq_sonda_fk0" FOREIGN KEY ("id_atendimento") REFERENCES "tbl_dti_atendimento"("id_atendimento");
+
+ALTER TABLE "tbl_dti_cond_adq_cat_vas" ADD CONSTRAINT "tbl_dti_cond_adq_cat_vas_fk0" FOREIGN KEY ("id_atendimento") REFERENCES "tbl_dti_atendimento"("id_atendimento");
