@@ -108,11 +108,11 @@ CREATE TABLE "TBL_INM_ATENDIMENTO" (
     "PERIMETRO_CEFALICO_RN3" TEXT,
     "PERIMETRO_CEFALICO_RN4" TEXT,
     "PERIMETRO_CEFALICO_RN5" TEXT,
-    "TP_STATUS" TEXT,
-    "CD_ESTABELECIMENTO" TEXT,
-    "DS_ERRO" TEXT,
-    "CD_DTI_ATENDIMENTO" TEXT,
-    "ID_ATENDIMENTO" INTEGER PRIMARY KEY AUTOINCREMENT
+    "TP_STATUS" TEXT,                        -- Status técnico do registro
+    "CD_ESTABELECIMENTO" TEXT,               -- Código do estabelecimento
+    "DS_ERRO" TEXT,                          -- Descrição de erro (técnico)
+    "CD_DTI_ATENDIMENTO" TEXT,               -- Código DTI para referência
+    "ID_ATENDIMENTO" INTEGER PRIMARY KEY AUTOINCREMENT  -- Chave primária
 );
 
 -- Tabela de médicos
@@ -145,7 +145,7 @@ CREATE TABLE "TBL_INM_PROCEDIMENTO" (
     "DT_EXEC" DATETIME,
     "DT_SOLIC" DATETIME,
     "DT_FIM_EXEC" DATETIME,
-    "CD_CIRURGIA_AVISO" TEXT,
+    "CD_CIRURGIA_AVISO" TEXT,              -- Código da cirurgia aviso (opcional)
     "CRM_MEDICO_PROCEDIMENTO" TEXT,
     "UF_MEDICO_PROCEDIMENTO" TEXT,
     "TP_ATUACAO_MEDICO_PROCEDIMENTO" TEXT,

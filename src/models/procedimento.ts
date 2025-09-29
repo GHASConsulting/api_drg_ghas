@@ -7,6 +7,7 @@ export class Procedimento {
   private dataSolicitacao: string; // Data da solicitação (yyyy-MM-ddTHH:mm:ss)
   private dataExecucao: string; // Data inicial da execução (yyyy-MM-ddTHH:mm:ss)
   private dataExecucaoFinal: string; // Data final da execução (yyyy-MM-ddTHH:mm:ss)
+  private codigoCirurgiaAviso: string; // Código da cirurgia aviso (opcional)
 
   // Relacionamento com médicos do procedimento
   private medicoProcedimento: MedicoProcedimento;
@@ -15,11 +16,10 @@ export class Procedimento {
   constructor() {
     this.codigoProcedimento = "";
     this.dataAutorizacao = "";
-
     this.dataExecucao = "";
     this.dataSolicitacao = "";
-
     this.dataExecucaoFinal = "";
+    this.codigoCirurgiaAviso = "";
 
     this.medicoProcedimento = new MedicoProcedimento();
     this.medicosProcedimentos = [];
@@ -45,6 +45,10 @@ export class Procedimento {
     this.dataExecucaoFinal = dataExecucaoFinal;
   }
 
+  public setCodigoCirurgiaAviso(codigoCirurgiaAviso: string): void {
+    this.codigoCirurgiaAviso = codigoCirurgiaAviso;
+  }
+
   public addMedicoProcedimento(medicoProcedimento: MedicoProcedimento): void {
     this.medicosProcedimentos.push(medicoProcedimento);
   }
@@ -52,10 +56,11 @@ export class Procedimento {
   public getData(): object {
     return {
       codigoProcedimento: this.codigoProcedimento,
-      dataAutorizado: this.dataAutorizacao,
+      dataAutorizacao: this.dataAutorizacao,
       dataExecucao: this.dataExecucao,
       dataSolicitacao: this.dataSolicitacao,
       dataExecucaoFinal: this.dataExecucaoFinal,
+      codigoCirurgiaAviso: this.codigoCirurgiaAviso,
       MedicoProcedimento: this.medicosProcedimentos.map((medicoProcedimento) =>
         medicoProcedimento.getData()
       ),
