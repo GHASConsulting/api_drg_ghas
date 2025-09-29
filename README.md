@@ -15,6 +15,12 @@
 - **[Configuração por Estabelecimento](./docs/GUIA_CONFIGURACAO_ESTABELECIMENTOS.md)** - Configurar para seu tipo
 - **[Testes e Validação](./docs/GUIA_TESTES_VALIDACAO.md)** - Validar configuração
 
+### **⚡ Guias Práticos**
+
+- **[README Deploy](./README_DEPLOY.md)** - Guia completo de deploy e instruções
+- **[Configuração Rápida](./CONFIGURACAO_RAPIDA.md)** - Configuração por tipo de estabelecimento
+- **[Troubleshooting](./TROUBLESHOOTING.md)** - Resolução de problemas comuns
+
 ---
 
 ## Documentação da API
