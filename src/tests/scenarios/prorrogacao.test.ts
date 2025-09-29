@@ -1,6 +1,13 @@
+import { TestDataGenerator } from "../testDataGenerator";
+import { TestRunner } from "../testRunner";
+
 export class ProrrogacaoTestScenarios {
-  constructor() {
-    // Inicialização dos cenários de teste de prorrogação
+  private dataGenerator: TestDataGenerator;
+  private testRunner: TestRunner;
+
+  constructor(dataGenerator?: TestDataGenerator, testRunner?: TestRunner) {
+    this.dataGenerator = dataGenerator || new TestDataGenerator();
+    this.testRunner = testRunner || new TestRunner();
   }
 
   async runAllScenarios() {
@@ -40,17 +47,33 @@ export class ProrrogacaoTestScenarios {
   }
 
   async cenarioProrrogacaoBasico() {
-    // Implementação do cenário de prorrogação básico
+    console.log("🧪 Executando Cenário Prorrogação Básico...");
+
+    // Gera dados de teste usando os modelos
+    const testData = await this.dataGenerator.generateProrrogacaoData(1);
+    const data = testData[0];
+
+    // Validações específicas para prorrogação
+    const validations = {
+      hospital: this.validateHospital(data.hospital),
+      paciente: this.validatePaciente(data.paciente),
+      internacao: this.validateInternacao(data.internacao),
+      prorrogacao: this.validateProrrogacao(data.internacao),
+    };
+
+    const isValid = Object.values(validations).every((v) => v.isValid);
+
     return {
       situacao: "PRORROGACAO",
       tipo: "BASICO",
-      status: "success",
+      status: isValid ? "success" : "error",
       dados: {
-        paciente: "Paciente com prorrogação básica",
-        hospital: "Hospital teste",
-        dataProrrogacao: new Date(),
-        diasProrrogacao: 7,
+        hospital: data.hospital.getData(),
+        paciente: data.paciente.getData(),
+        internacao: data.internacao.getData(),
+        validations: validations,
       },
+      errors: isValid ? [] : this.collectErrors(validations),
     };
   }
 
@@ -127,5 +150,85 @@ export class ProrrogacaoTestScenarios {
         },
       ],
     };
+  }
+
+  // Métodos de validação
+  private validateHospital(hospital: any) {
+    const data = hospital.getData();
+    const errors = [];
+
+    if (!data.codigo) errors.push("Código do hospital é obrigatório");
+    if (!data.nome) errors.push("Nome do hospital é obrigatório");
+    if (!data.cnes) errors.push("CNES do hospital é obrigatório");
+
+    return {
+      isValid: errors.length === 0,
+      errors: errors,
+      data: data,
+    };
+  }
+
+  private validatePaciente(paciente: any) {
+    const data = paciente.getData();
+    const errors = [];
+
+    if (!data.dataNascimento) errors.push("Data de nascimento é obrigatória");
+    if (!data.sexo) errors.push("Sexo é obrigatório");
+
+    return {
+      isValid: errors.length === 0,
+      errors: errors,
+      data: data,
+    };
+  }
+
+  private validateInternacao(internacao: any) {
+    const data = internacao.getData();
+    const errors = [];
+
+    if (!data.situacao) errors.push("Situação é obrigatória");
+    if (!data.caraterInternacao)
+      errors.push("Caráter da internação é obrigatório");
+    if (!data.procedencia) errors.push("Procedência é obrigatória");
+    if (!data.leito) errors.push("Leito é obrigatório");
+    if (!data.dataInternacao) errors.push("Data de internação é obrigatória");
+
+    return {
+      isValid: errors.length === 0,
+      errors: errors,
+      data: data,
+    };
+  }
+
+  private validateProrrogacao(internacao: any) {
+    const data = internacao.getData();
+    const errors = [];
+
+    // Validações específicas para prorrogação
+    if (data.situacao !== "2") {
+      errors.push("Situação deve ser '2' para prorrogação");
+    }
+
+    if (data.internadoOutrasVezes === "S" && !data.hospitalInternacaoAnterior) {
+      errors.push(
+        "Hospital de internação anterior é obrigatório quando paciente foi internado outras vezes"
+      );
+    }
+
+    return {
+      isValid: errors.length === 0,
+      errors: errors,
+      data: data,
+    };
+  }
+
+  private collectErrors(validations: any) {
+    const allErrors = [];
+    Object.values(validations).forEach((validation: any) => {
+      if (validation.errors) {
+        allErrors.push(...validation.errors);
+      }
+    });
+    return allErrors;
   }
 }
