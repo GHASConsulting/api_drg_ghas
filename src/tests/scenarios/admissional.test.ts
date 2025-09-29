@@ -1,13 +1,10 @@
 import { TestDataGenerator } from "../testDataGenerator";
-import { TestRunner } from "../testRunner";
 
 export class AdmissionalTestScenarios {
   private dataGenerator: TestDataGenerator;
-  private testRunner: TestRunner;
 
-  constructor(dataGenerator?: TestDataGenerator, testRunner?: TestRunner) {
+  constructor(dataGenerator?: TestDataGenerator) {
     this.dataGenerator = dataGenerator || new TestDataGenerator();
-    this.testRunner = testRunner || new TestRunner();
   }
 
   async runAllScenarios() {
@@ -90,6 +87,10 @@ export class AdmissionalTestScenarios {
     procedimento1.setCodigoProcedimento("PROC001");
     procedimento1.setDataExecucao(new Date().toISOString());
     procedimento1.setDataAutorizacao(new Date().toISOString());
+    procedimento1.setDataSolicitacao(new Date().toISOString());
+    procedimento1.setDataExecucaoFinal(new Date().toISOString());
+    // ✅ TESTANDO O NOVO CAMPO
+    procedimento1.setCodigoCirurgiaAviso("CIR001");
 
     const procedimento2 = new (
       await import("../../models/procedimento")
@@ -97,6 +98,10 @@ export class AdmissionalTestScenarios {
     procedimento2.setCodigoProcedimento("PROC002");
     procedimento2.setDataExecucao(new Date().toISOString());
     procedimento2.setDataAutorizacao(new Date().toISOString());
+    procedimento2.setDataSolicitacao(new Date().toISOString());
+    procedimento2.setDataExecucaoFinal(new Date().toISOString());
+    // ✅ TESTANDO O NOVO CAMPO
+    procedimento2.setCodigoCirurgiaAviso("CIR002");
 
     data.internacao.addProcedimento(procedimento1);
     data.internacao.addProcedimento(procedimento2);
@@ -255,6 +260,19 @@ export class AdmissionalTestScenarios {
         if (!proc.dataAutorizacao)
           errors.push(
             `Procedimento ${index + 1}: Data de autorização é obrigatória`
+          );
+        if (!proc.dataSolicitacao)
+          errors.push(
+            `Procedimento ${index + 1}: Data de solicitação é obrigatória`
+          );
+        if (!proc.dataExecucaoFinal)
+          errors.push(
+            `Procedimento ${index + 1}: Data final de execução é obrigatória`
+          );
+        // ✅ VALIDANDO O NOVO CAMPO
+        if (!proc.codigoCirurgiaAviso)
+          errors.push(
+            `Procedimento ${index + 1}: Código de cirurgia aviso é obrigatório`
           );
       });
     }
