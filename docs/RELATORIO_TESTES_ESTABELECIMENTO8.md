@@ -196,3 +196,4 @@ node test-estabelecimento8-simple.js 3 7  # Particular
 **📅 Relatório gerado em**: 24/09/2025 16:08  
 **👨‍💻 Testado por**: Sistema Automatizado DRG  
 **🔧 Versão**: 1.0.0
+

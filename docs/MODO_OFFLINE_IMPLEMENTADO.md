@@ -113,3 +113,4 @@ O modo offline está **100% funcional** e pronto para uso. Você pode:
 ---
 
 **🎉 Modo Offline DRG implementado com sucesso!**
+

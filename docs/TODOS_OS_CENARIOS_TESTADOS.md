@@ -244,3 +244,4 @@ for i in {1..8}; do node run-specific-scenarios.js 3 $i; done
 O sistema está **completamente validado** e **pronto para uso em produção** com dados reais do Hospital INOVEMED!
 
 **🏥 Sistema DRG - 100% Testado e Aprovado! 🎉**
+

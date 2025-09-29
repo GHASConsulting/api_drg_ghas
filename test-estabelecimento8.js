@@ -92,3 +92,4 @@ try {
   console.error('\n❌ Erro durante a execução:', error.message);
   process.exit(1);
 }
+

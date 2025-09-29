@@ -177,3 +177,4 @@ node test-estabelecimento8-simple.js 3 7  # Suplementar Particular
 - **XMLs corretos** e válidos
 
 **🏥 Sistema DRG Corrigido - Hospital do Teste + Dados Reais de Pacientes! 🎉**
+

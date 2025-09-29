@@ -176,3 +176,4 @@ node run-specific-scenarios.js 1 8
 **🎉 Sistema de Cenários Específicos implementado com sucesso!**
 
 Agora você pode testar qualquer cenário específico (CTI, RN, Emergência, etc.) usando o comando `node run-specific-scenarios.js [situacao] [cenario]` com dados reais do Hospital INOVEMED!
+
