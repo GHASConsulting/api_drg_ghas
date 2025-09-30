@@ -9,7 +9,7 @@ import {
   runDRGModelValidationTests,
   runDRGDataStructureValidationTests,
   runDRGTests,
-} from "./tests/index";
+} from "./index";
 
 async function testDRGSystem() {
   console.log("🧪 TESTANDO SISTEMA DRG ATUALIZADO");

@@ -5,9 +5,9 @@
  * Execute com: npx ts-node src/test-simple.ts
  */
 
-import { TestDataGenerator } from "./tests/testDataGenerator";
-import { ModelValidationTests } from "./tests/modelValidation.test";
-import { DataStructureValidationTests } from "./tests/dataStructureValidation.test";
+import { TestDataGenerator } from "./testDataGenerator";
+import { ModelValidationTests } from "./modelValidation.test";
+import { DataStructureValidationTests } from "./dataStructureValidation.test";
 
 async function testDRGSystem() {
   console.log("🧪 TESTANDO SISTEMA DRG - VERSÃO SIMPLES");
