@@ -94,7 +94,7 @@ export class TestDataGenerator {
       paciente.setCep("15755036");
 
       // Configura dados da internação com base nos dados reais
-      internacao.setSituacao("3"); // Situação 3 conforme dados reais
+      internacao.setSituacao("4"); // Situação 3 conforme dados reais
       internacao.setCaraterInternacao("1"); // Eletivo
       internacao.setProcedencia("M"); // Comunidade
       internacao.setLeito("LEITO_01"); // Leito de exemplo
@@ -174,7 +174,7 @@ export class TestDataGenerator {
       paciente.setCns("987654321098765");
 
       // Configura dados da internação para prorrogação
-      internacao.setSituacao("2"); // Prorrogação
+      internacao.setSituacao("4"); // Prorrogação
       internacao.setCaraterInternacao("2"); // Urgência
       internacao.setProcedencia("I"); // Instituição
       internacao.setLeito(`LEITO${String(i + 1).padStart(3, "0")}`);
@@ -243,7 +243,7 @@ export class TestDataGenerator {
       paciente.setCns("111222333444555");
 
       // Configura dados da internação para suplementar
-      internacao.setSituacao("3"); // Suplementar
+      internacao.setSituacao("4"); // Suplementar
       internacao.setCaraterInternacao("3"); // Emergência
       internacao.setProcedencia("U"); // UPA
       internacao.setLeito(`LEITO${String(i + 1).padStart(3, "0")}`);
@@ -371,10 +371,13 @@ export class TestDataGenerator {
       paciente.setCns("111222333444555");
 
       // Configura dados da internação obstétrica
-      internacao.setSituacao("1"); // Admissional
+      internacao.setSituacao("4"); // Admissional
       internacao.setCaraterInternacao("2"); // Urgência
       internacao.setProcedencia("M"); // Comunidade
       internacao.setLeito(`OBSTETRICIA${String(i + 1).padStart(3, "0")}`);
+      internacao.setNumeroOperadora("3945"); // Operadora real
+      internacao.setNumeroRegistro(`PARTO${String(i + 1).padStart(6, "0")}`);
+      internacao.setNumeroAtendimento(`PARTO${String(i + 1).padStart(7, "0")}`);
       internacao.setDataInternacao(new Date().toISOString());
       internacao.setCodigoCidPrincipal("O80.1"); // Parto normal
 
