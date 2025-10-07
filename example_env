@@ -7,37 +7,44 @@
 PORT=3434
 
 # Configuração de Banco de Dados
-DATABASE_CLIENT='pg' # 'oracledb' || 'pg'
+DATABASE_CLIENT='oracledb' # 'oracledb' || 'pg'
 #SEPARE OS HORÁRIOS DO CRON POR ;
 #NÃO ESQUEÇA DO ; NO FINAL 
 #EXEMPLO: 14:30;17:30;
 HORARIOS_CRON = '08:00;12:00;16:00;'
 
-#PostgreSQL
+# ========================================
+# BASE DE TESTE GHAS (PostgreSQL)
+# ========================================
+# DB_CONNECTION_STRING=postgresql://drg_user:drg_password_2024@101.44.2.109:5436/drg_database
 
-DB_CONNECTION_STRING=postgresql://drg_user:drg_password_2024@101.44.2.109:5436/drg_database
-
-# Acesso ao Banco de Dados
-# Base tst banco
+# ========================================
+# BASE DE PRODUÇÃO (Oracle)
+# ========================================
 # DB_CONNECTION_STRING='(DESCRIPTION=(ADDRESS_LIST=(ADDRESS = (PROTOCOL = TCP)(HOST = )(PORT = 1521)))(CONNECT_DATA=(SERVICE_NAME = )))'
 
-# Base de producao - HA Barretos
-# DB_CONNECTION_STRING='(DESCRIPTION=(ADDRESS_LIST=(ADDRESS = (PROTOCOL = TCP)(HOST = )(PORT = 1521)))(CONNECT_DATA=(SERVICE_NAME = )))'
+# ========================================
+# CREDENCIAIS DO BANCO DE DADOS
+# ========================================
+# DB_USER='drg_user'
+# DB_PASSWORD='drg_password_2024'
 
 
-DB_PASSWORD='drg_password_2024'
-DB_USER='drg_user'
-
-STRING_ESTABELECIMENTO_DRG_9948='[API_USER="drg_user"] [API_PASSWORD="drg_password_2024"] [ESTABELECIMENTO=9948]'
-
+# ========================================
+# CREDENCIAIS DO DRG STRING
+# ========================================
+# STRING_ESTABELECIMENTO_DRG_9948='[API_USER="drg_user"] [API_PASSWORD="drg_password_2024"] [ESTABELECIMENTO=9948]'
 
 
 
 
 #WSDL URL
-
+# ========================================
 WSDL_URL='https://iagwebservice.sigquali.com.br/iagwebservice/importaInternacao?wsdl'
 
+# ========================================
+# TABELAS DO BANCO DE DADOS
+# ========================================
 TBL_MEDICO='INOVEMED.TBL_INM_MEDICO'
 
 TBL_CID_SEC='INOVEMED.TBL_INM_CID_SEC'

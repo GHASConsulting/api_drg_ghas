@@ -6,6 +6,18 @@ import { Internacao } from "../models/internacao";
 import { Operadora } from "../models/operadora";
 import { Procedimento } from "../models/procedimento";
 import { Medico } from "../models/medico";
+import { PartoAdequado } from "../models/partoAdequado";
+import { Rn } from "../models/rn";
+import { CidSecundario } from "../models/cidSecundario";
+import { Cti } from "../models/cti";
+import { SuporteVentilatorio } from "../models/suporteVentilatorio";
+import { CateterVascularCentral } from "../models/cateterVascularCentral";
+import { SondaVesicalDeDemora } from "../models/sondaVesicalDeDemora";
+import { CondicaoAdquirida } from "../models/condicaoAdquirida";
+import { AltaAdministrativa } from "../models/altaAdministrativa";
+import { AnaliseCritica } from "../models/analiseCritica";
+import { DispositivoTerapeutico } from "../models/dispositivoTerapeutico";
+import { CausaExternaPermanencia } from "../models/causaExternaPermanencia";
 
 export class TestDataGenerator {
   private baseData: any = {};
@@ -44,42 +56,67 @@ export class TestDataGenerator {
       const operadora = new Operadora();
       const medico = new Medico();
 
-      // Configura dados do hospital
-      hospital.setCodigo(`HOSP${String(i + 1).padStart(3, "0")}`);
-      hospital.setNome(`Hospital Teste ${i + 1}`);
-      hospital.setCnes(`123456${String(i + 1).padStart(2, "0")}`);
+      // Configura dados do hospital com base nos dados reais do INOVEMED
+      hospital.setCodigo("9948"); // Código real do estabelecimento
+      hospital.setNome("INOVEMED");
+      hospital.setCnes("124"); // CNES real
       hospital.setPorte("2"); // Médio
       hospital.setComplexidade("2"); // Alta complexidade
       hospital.setEsferaAdministrativa("4"); // Privada
-      hospital.setUf("SP");
-      hospital.setCidade("3550308"); // São Paulo
-      hospital.setTipoLogradouro("Rua");
-      hospital.setLogradouro(`Rua Teste ${i + 1}`);
-      hospital.setNumeroLogradouro(`${100 + i}`);
-      hospital.setBairro("Centro");
-      hospital.setCep("01234567");
+      hospital.setUf("MG");
+      hospital.setCidade("Minas Gerais");
+      hospital.setCodigoMunicipio("3145208"); // Código de Minas Gerais
+      hospital.setTipoLogradouro("AVENIDA");
+      hospital.setLogradouro("NISIO BATISTA DE OLIVEIRA");
+      hospital.setNumeroLogradouro("400");
+      hospital.setComplementoLogradouro("S/N");
+      hospital.setBairro("SAO LUCAS");
+      hospital.setCep("30240510");
 
-      // Configura dados do paciente
-      paciente.setDataNascimento("1990-01-01T00:00:00");
-      paciente.setSexo("M");
-      paciente.setCpf("12345678901");
+      // Configura dados do paciente com base nos dados reais
+      paciente.setDataNascimento("1971-06-19T00:00:00"); // Data real
+      paciente.setSexo("F"); // Sexo real
+      paciente.setCpf("50234242191"); // CPF real
       paciente.setRecemNascido("N");
       paciente.setParticular("N");
-      paciente.setCns("123456789012345");
+      paciente.setCns("702109711362597"); // CNS real
+      paciente.setCodigoIdentificacao("702109711362597"); // Código de identificação
+      paciente.setVulnerabilidadeSocial("N");
+      // Endereço do paciente real
+      paciente.setUf("SP");
+      paciente.setCidade("SP");
+      paciente.setCodigoMunicipio("3550308"); // Código SP
+      paciente.setTipoLogradouro("RUA");
+      paciente.setLogradouro("RUA 11");
+      paciente.setNumeroLogradouro("337");
+      paciente.setComplementoLogradouro("CASA");
+      paciente.setBairro("JARDIM PRIMAVERA");
+      paciente.setCep("15755036");
 
-      // Configura dados da internação
-      internacao.setSituacao("1"); // Admissional
+      // Configura dados da internação com base nos dados reais
+      internacao.setSituacao("3"); // Situação 3 conforme dados reais
       internacao.setCaraterInternacao("1"); // Eletivo
       internacao.setProcedencia("M"); // Comunidade
-      internacao.setLeito(`LEITO${String(i + 1).padStart(3, "0")}`);
-      internacao.setNumeroOperadora("123456789");
-      internacao.setNumeroRegistro(`REG${String(i + 1).padStart(6, "0")}`);
-      internacao.setDataInternacao(new Date().toISOString());
-      internacao.setCodigoCidPrincipal("A00.0");
-      internacao.setInternadoOutrasVezes("N");
+      internacao.setLeito("LEITO_01"); // Leito de exemplo
+      internacao.setNumeroOperadora("3945"); // Operadora real
+      internacao.setNumeroRegistro("1539811"); // Registro real
+      internacao.setNumeroAtendimento("6580261"); // Atendimento real
+      internacao.setDataInternacao("2025-09-16T11:13:35"); // Data real
+      internacao.setDataAlta("2025-09-16T17:13:35"); // Data real
+      internacao.setCondicaoAlta("A"); // Alta para casa conforme dados reais
+      internacao.setCodigoCidPrincipal("C50"); // CID real
+      internacao.setInternadoOutrasVezes("S"); // Conforme dados reais
       internacao.setHospitalInternacaoAnterior("N");
       internacao.setReiternacao("N");
       internacao.setRecaida("N");
+      internacao.setAcao("COMPLEMENTAR"); // Ação real
+      internacao.setNenhumDispositivoTerapeutico("S");
+
+      // Configura dados da operadora com base nos dados reais
+      operadora.setCodigo("3945"); // Código real da operadora
+      operadora.setNumeroCarteira("702109711362597"); // Carteira real
+      operadora.setPlano("PLANO_TESTE"); // Plano de exemplo
+      operadora.setDataValidade("2025-12-31T23:59:59"); // Data de validade
 
       // Adiciona entidades relacionadas
       internacao.addHospital(hospital);
@@ -111,20 +148,22 @@ export class TestDataGenerator {
       const operadora = new Operadora();
       const medico = new Medico();
 
-      // Configura dados do hospital (mesmo padrão do admissional)
-      hospital.setCodigo(`HOSP${String(i + 1).padStart(3, "0")}`);
-      hospital.setNome(`Hospital Teste ${i + 1}`);
-      hospital.setCnes(`123456${String(i + 1).padStart(2, "0")}`);
+      // Configura dados do hospital (mesmo padrão do admissional) - INOVEMED
+      hospital.setCodigo("9948");
+      hospital.setNome("INOVEMED");
+      hospital.setCnes("124");
       hospital.setPorte("2");
       hospital.setComplexidade("2");
       hospital.setEsferaAdministrativa("4");
-      hospital.setUf("SP");
-      hospital.setCidade("3550308");
-      hospital.setTipoLogradouro("Rua");
-      hospital.setLogradouro(`Rua Teste ${i + 1}`);
-      hospital.setNumeroLogradouro(`${100 + i}`);
-      hospital.setBairro("Centro");
-      hospital.setCep("01234567");
+      hospital.setUf("MG");
+      hospital.setCidade("Minas Gerais");
+      hospital.setCodigoMunicipio("3145208");
+      hospital.setTipoLogradouro("AVENIDA");
+      hospital.setLogradouro("NISIO BATISTA DE OLIVEIRA");
+      hospital.setNumeroLogradouro("400");
+      hospital.setComplementoLogradouro("S/N");
+      hospital.setBairro("SAO LUCAS");
+      hospital.setCep("30240510");
 
       // Configura dados do paciente
       paciente.setDataNascimento("1985-05-15T00:00:00");
@@ -288,6 +327,139 @@ export class TestDataGenerator {
       console.error("Erro ao buscar procedimentos:", error);
       return [];
     }
+  }
+
+  /**
+   * Gera dados de teste específicos para Parto Adequado
+   */
+  async generatePartoAdequadoData(count: number = 1) {
+    const data = [];
+    for (let i = 0; i < count; i++) {
+      // Cria instâncias dos modelos
+      const hospital = new Hospital();
+      const paciente = new Paciente();
+      const internacao = new Internacao();
+      const operadora = new Operadora();
+      const medico = new Medico();
+      const partoAdequado = new PartoAdequado();
+      const rn = new Rn();
+      const procedimento = new Procedimento();
+
+      // Configura dados do hospital maternidade - INOVEMED (mesmo hospital para consistência)
+      hospital.setCodigo("9948");
+      hospital.setNome("INOVEMED");
+      hospital.setCnes("124");
+      hospital.setPorte("2"); // Médio
+      hospital.setComplexidade("2"); // Alta complexidade
+      hospital.setEsferaAdministrativa("4"); // Privada
+      hospital.setUf("MG");
+      hospital.setCidade("Minas Gerais");
+      hospital.setCodigoMunicipio("3145208");
+      hospital.setTipoLogradouro("AVENIDA");
+      hospital.setLogradouro("NISIO BATISTA DE OLIVEIRA");
+      hospital.setNumeroLogradouro("400");
+      hospital.setComplementoLogradouro("S/N");
+      hospital.setBairro("SAO LUCAS");
+      hospital.setCep("30240510");
+
+      // Configura dados da paciente gestante
+      paciente.setDataNascimento("1995-03-20T00:00:00");
+      paciente.setSexo("F");
+      paciente.setCpf("11122233344");
+      paciente.setRecemNascido("N");
+      paciente.setParticular("N");
+      paciente.setCns("111222333444555");
+
+      // Configura dados da internação obstétrica
+      internacao.setSituacao("1"); // Admissional
+      internacao.setCaraterInternacao("2"); // Urgência
+      internacao.setProcedencia("M"); // Comunidade
+      internacao.setLeito(`OBSTETRICIA${String(i + 1).padStart(3, "0")}`);
+      internacao.setDataInternacao(new Date().toISOString());
+      internacao.setCodigoCidPrincipal("O80.1"); // Parto normal
+
+      // Configura dados do médico obstetra
+      medico.setNome("Dr. João Obstetra");
+      medico.setCrm("12345");
+      medico.setUf("SP");
+      medico.setEspecialidade("Ginecologia e Obstetrícia");
+      medico.setMedicoResponsavel("S");
+
+      // **CONFIGURA DADOS COMPLETOS DE PARTO ADEQUADO**
+      partoAdequado.setAntecedentesObstetricos("NL"); // Nulípara
+      partoAdequado.setNumeroCesareasAnteriores("0");
+      partoAdequado.setApresentacaoFetalRn1("CF"); // Cefálica
+      partoAdequado.setInicioTrabalhoParto("EP"); // Espontâneo
+      partoAdequado.setRupturaUterina("N");
+      partoAdequado.setLaceracaoPerineal("N");
+      partoAdequado.setTransfusaoSanguinea("N");
+      partoAdequado.setMorteMaterna("N");
+      partoAdequado.setMorteFetalIntraparto("N");
+      partoAdequado.setAdmissaoMaternaUti("N");
+      partoAdequado.setRetornoSalaParto("N");
+      partoAdequado.setIndiceSatisfacaoHospital("9");
+      partoAdequado.setIndiceSatisfacaoEquipe("10");
+      partoAdequado.setHouveContatoPele("S");
+      partoAdequado.setPosicaoParto("2"); // Não Supino
+      partoAdequado.setUsoOcitocinaMisoprostol("3"); // 3º Estágio
+      partoAdequado.setParturienteAcompanhada("S");
+      partoAdequado.setPresencaDoula("N");
+      partoAdequado.setRealizadaEpisiotomia("N");
+      partoAdequado.setHouveAleitamentoMaterno("S");
+      partoAdequado.setQuandoOcorreuClampeamento("2"); // Até 30 segundos
+      partoAdequado.setHouveMetodosAnalgesia("S");
+      partoAdequado.setMetodoAnalgesia("Analgesia peridural");
+      partoAdequado.setPerimetroCefalicoRn1("34.5");
+      partoAdequado.setCesariana("N"); // Não foi cesariana
+      partoAdequado.setMedicacaoInducaoParto("N");
+      partoAdequado.setNumeroPartosAnteriores("0");
+
+      // **CONFIGURA DADOS DO RN**
+      rn.setPesoNascimento("3200");
+      rn.setIdadeGestacional("39.0");
+      rn.setComprimento("50.5");
+      rn.setSexo("M");
+      rn.setNascidoVivo("S");
+      rn.setTocotraumatismo("N");
+      rn.setApgar("S");
+      rn.setApgarQuintoMinuto("9");
+      rn.setAlta48horas("S");
+      rn.setNumeroAutorizacaoMae("AUTH12345");
+      rn.setNumeroAtendimentoMae("ATEND12345");
+      rn.setNumeroCarteiraMae("CART12345");
+
+      // **CONFIGURA PROCEDIMENTO COM CAMPO NOVO**
+      procedimento.setCodigoProcedimento("0310010020"); // Parto normal
+      procedimento.setDataExecucao(new Date().toISOString());
+      procedimento.setDataSolicitacao(new Date().toISOString());
+      procedimento.setDataExecucaoFinal(new Date().toISOString());
+      // ✅ TESTANDO O NOVO CAMPO
+      procedimento.setCodigoCirurgiaAviso("PARTO001");
+
+      // Adiciona entidades relacionadas
+      internacao.addHospital(hospital);
+      internacao.addPaciente(paciente);
+      internacao.addOpradora(operadora);
+      internacao.addMedico(medico);
+      internacao.addPartoAdequado(partoAdequado);
+      internacao.addRn(rn);
+      internacao.addProcedimento(procedimento);
+
+      data.push({
+        id: uuidv4(),
+        situacao: "PARTO_ADEQUADO",
+        internacao: internacao,
+        hospital: hospital,
+        paciente: paciente,
+        operadora: operadora,
+        medico: medico,
+        partoAdequado: partoAdequado,
+        rn: rn,
+        procedimento: procedimento,
+        createdAt: new Date(),
+      });
+    }
+    return data;
   }
 
   private async getEstabelecimento8Data() {

@@ -4,6 +4,11 @@ import { Internacao } from "../models/internacao";
 import { Operadora } from "../models/operadora";
 import { Procedimento } from "../models/procedimento";
 import { Medico } from "../models/medico";
+import { PartoAdequado } from "../models/partoAdequado";
+import { Rn } from "../models/rn";
+import { CidSecundario } from "../models/cidSecundario";
+import { Cti } from "../models/cti";
+import { SuporteVentilatorio } from "../models/suporteVentilatorio";
 
 /**
  * Testes de validação dos campos obrigatórios dos modelos DRG
@@ -38,6 +43,18 @@ export class ModelValidationTests {
         test: () => this.testProcedimentoValidation(),
       },
       { name: "Validação Médico", test: () => this.testMedicoValidation() },
+      {
+        name: "Validação PartoAdequado",
+        test: () => this.testPartoAdequadoValidation(),
+      },
+      {
+        name: "Validação RN",
+        test: () => this.testRnValidation(),
+      },
+      {
+        name: "Validação SuporteVentilatorio",
+        test: () => this.testSuporteVentilatorioValidation(),
+      },
       {
         name: "Validação Relacionamentos",
         test: () => this.testRelacionamentosValidation(),
@@ -274,12 +291,22 @@ export class ModelValidationTests {
     procedimento.setCodigoProcedimento("PROC001");
     procedimento.setDataExecucao(new Date().toISOString());
     procedimento.setDataAutorizacao(new Date().toISOString());
+    procedimento.setDataSolicitacao(new Date().toISOString());
+    procedimento.setDataExecucaoFinal(new Date().toISOString());
+    // ✅ TESTANDO O NOVO CAMPO
+    procedimento.setCodigoCirurgiaAviso("CIR001");
 
     const validData = procedimento.getData() as any;
     if (!validData.codigoProcedimento)
       errors.push("Código não foi definido corretamente");
     if (!validData.dataExecucao)
       errors.push("Data de execução não foi definida corretamente");
+    if (!validData.dataSolicitacao)
+      errors.push("Data de solicitação não foi definida corretamente");
+    if (!validData.dataExecucaoFinal)
+      errors.push("Data final de execução não foi definida corretamente");
+    if (!validData.codigoCirurgiaAviso)
+      errors.push("Código de cirurgia aviso não foi definido corretamente");
 
     return {
       isValid: errors.length === 0,
@@ -396,6 +423,131 @@ export class ModelValidationTests {
     if (!internacaoData.Medico || internacaoData.Medico.length === 0) {
       errors.push("Médico não foi adicionado à internação");
     }
+
+    return {
+      isValid: errors.length === 0,
+      errors: errors,
+    };
+  }
+
+  /**
+   * Testa validação do modelo PartoAdequado
+   */
+  async testPartoAdequadoValidation(): Promise<{
+    isValid: boolean;
+    errors: string[];
+  }> {
+    const errors = [];
+    const partoAdequado = new PartoAdequado();
+
+    // Testa com dados válidos completos
+    partoAdequado.setAntecedentesObstetricos("NL"); // Nulípara
+    partoAdequado.setNumeroCesareasAnteriores("0");
+    partoAdequado.setApresentacaoFetalRn1("CF"); // Cefálica
+    partoAdequado.setInicioTrabalhoParto("EP"); // Espontâneo
+    partoAdequado.setRupturaUterina("N");
+    partoAdequado.setLaceracaoPerineal("N");
+    partoAdequado.setTransfusaoSanguinea("N");
+    partoAdequado.setMorteMaterna("N");
+    partoAdequado.setMorteFetalIntraparto("N");
+    partoAdequado.setAdmissaoMaternaUti("N");
+    partoAdequado.setRetornoSalaParto("N");
+    partoAdequado.setIndiceSatisfacaoHospital("9");
+    partoAdequado.setIndiceSatisfacaoEquipe("10");
+    partoAdequado.setHouveContatoPele("S");
+    partoAdequado.setPosicaoParto("2"); // Não Supino
+    partoAdequado.setUsoOcitocinaMisoprostol("3");
+    partoAdequado.setParturienteAcompanhada("S");
+    partoAdequado.setPresencaDoula("N");
+    partoAdequado.setRealizadaEpisiotomia("N");
+    partoAdequado.setHouveAleitamentoMaterno("S");
+    partoAdequado.setQuandoOcorreuClampeamento("2");
+    partoAdequado.setHouveMetodosAnalgesia("S");
+    partoAdequado.setMetodoAnalgesia("Analgesia peridural");
+    partoAdequado.setPerimetroCefalicoRn1("34.5");
+    partoAdequado.setCesariana("N");
+    partoAdequado.setMedicacaoInducaoParto("N");
+    partoAdequado.setNumeroPartosAnteriores("0");
+
+    const data = partoAdequado.getData() as any;
+
+    // Validação básica dos campos principais
+    if (!data.antecedentesObstetricos)
+      errors.push("Antecedentes obstétricos não foram definidos");
+    if (!data.apresentacaoFetalRn1)
+      errors.push("Apresentação fetal RN1 não foi definida");
+    if (!data.inicioTrabalhoParto)
+      errors.push("Início do trabalho de parto não foi definido");
+
+    return {
+      isValid: errors.length === 0,
+      errors: errors,
+    };
+  }
+
+  /**
+   * Testa validação do modelo RN (Recém-Nascido)
+   */
+  async testRnValidation(): Promise<{
+    isValid: boolean;
+    errors: string[];
+  }> {
+    const errors = [];
+    const rn = new Rn();
+
+    // Testa com dados válidos
+    rn.setPesoNascimento("3200");
+    rn.setIdadeGestacional("39.0");
+    rn.setComprimento("50.5");
+    rn.setSexo("M");
+    rn.setNascidoVivo("S");
+    rn.setTocotraumatismo("N");
+    rn.setApgar("S");
+    rn.setApgarQuintoMinuto("9");
+    rn.setAlta48horas("S");
+    rn.setNumeroAutorizacaoMae("AUTH12345");
+    rn.setNumeroAtendimentoMae("ATEND12345");
+    rn.setNumeroCarteiraMae("CART12345");
+
+    const data = rn.getData() as any;
+
+    // Validação dos campos obrigatórios
+    if (!data.pesoNascimento)
+      errors.push("Peso de nascimento não foi definido");
+    if (!data.sexo) errors.push("Sexo do RN não foi definido");
+    if (!data.nascidoVivo) errors.push("Status nascido vivo não foi definido");
+
+    return {
+      isValid: errors.length === 0,
+      errors: errors,
+    };
+  }
+
+  /**
+   * Testa validação do modelo SuporteVentilatorio
+   */
+  async testSuporteVentilatorioValidation(): Promise<{
+    isValid: boolean;
+    errors: string[];
+  }> {
+    const errors = [];
+    const suporte = new SuporteVentilatorio();
+
+    // Testa com dados válidos
+    suporte.setTipo("I"); // Invasivo
+    suporte.setTipoInvasivo("T"); // Traqueostomia
+    suporte.setLocal("C"); // No CTI
+    suporte.setDataInicial(new Date().toISOString());
+    suporte.setDataFinal(new Date().toISOString());
+
+    const data = suporte.getData() as any;
+
+    // Validação dos campos
+    if (!data.tipo)
+      errors.push("Tipo de suporte ventilatório não foi definido");
+    if (!data.local)
+      errors.push("Local do suporte ventilatório não foi definido");
+    if (!data.dataInicial) errors.push("Data inicial não foi definida");
 
     return {
       isValid: errors.length === 0,
