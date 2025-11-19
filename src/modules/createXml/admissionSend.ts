@@ -85,7 +85,7 @@ export async function admission(
                     const erro = internacao.erro?.[0] ?? "Erro padrão";
                     await knex
                       .update({
-                        TP_STATUS: "A",
+                        TP_STATUS: "E",
                         DS_ERRO: erro,
                       })
                       .from(TBL_ATENDIMENTO)
