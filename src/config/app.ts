@@ -26,8 +26,6 @@ app.register(createXmlRoutes);
 app.register(createXmlParams);
 app.register(createTestRoutes);
 
-enviaPareclado();
-
 app
   .listen({
     port: apiPort,
