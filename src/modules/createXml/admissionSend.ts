@@ -133,7 +133,7 @@ export async function admission(
       // Marca como erro no banco
       await knex
         .update({
-          TP_STATUS: "A",
+          TP_STATUS: "E",
           DS_ERRO: error.message || "Erro no processamento",
         })
         .from(TBL_ATENDIMENTO)
