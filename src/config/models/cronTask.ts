@@ -1,10 +1,34 @@
 import { CronJob } from 'cron'
 
 function isValidCronExpression(cronExpression: string): boolean {
-  const cronRegex =
-    /^(\*|((\*\/)?[1-5]?[0-9])) (\*|((\*\/)?[1-5]?[0-9])) (\*|((\*\/)?(1?[0-9]|2[0-3]))) (\*|((\*\/)?([1-9]|[12][0-9]|3[0-1]))) (\*|((\*\/)?([1-9]|1[0-2]))) (\*|((\*\/)?[0-6]))$/
-
-  return cronRegex.test(cronExpression)
+  // Aceita expressões cron com 5 ou 6 campos
+  // Formato: [segundo] minuto hora dia mês dia-da-semana
+  // Exemplos válidos: "*/5 * * * *" ou "0 */5 * * * *"
+  
+  const parts = cronExpression.trim().split(/\s+/)
+  
+  // Deve ter 5 ou 6 partes
+  if (parts.length !== 5 && parts.length !== 6) {
+    return false
+  }
+  
+  // Valida cada parte usando uma regex mais flexível
+  // Aceita: *, */n, n, n-m, n,m, n-m/x
+  const cronPartRegex = /^(\*|\*\/\d+|\d+|\d+-\d+|\d+,\d+|\d+-\d+\/\d+|\d+\/\d+)$/
+  
+  for (const part of parts) {
+    if (!cronPartRegex.test(part)) {
+      return false
+    }
+  }
+  
+  // Tenta criar um CronJob para validação final
+  try {
+    new CronJob(cronExpression, () => {})
+    return true
+  } catch {
+    return false
+  }
 }
 
 export class CronTask {
